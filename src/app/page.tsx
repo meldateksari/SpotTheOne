@@ -5,6 +5,9 @@ import { useRouter } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
 import { db } from "@/lib/firebase";
 import { doc, setDoc } from "firebase/firestore";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Card } from "@/components/ui/Card";
 
 export default function Home() {
   const [name, setName] = useState("");
@@ -39,45 +42,46 @@ export default function Home() {
   };
 
   return (
-    <main className="home-layout fade-in">
-      <h1 className="home-title">Who is Most Likely?</h1>
-
-      <div className="home-card">
-        {/* Name Input */}
-        <input
-          type="text"
-          placeholder="Adın"
-          className="home-input"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-
-        {/* Create Room Button */}
-        <button className="btn mt" onClick={createRoom}>
-          Yeni Oda Kur
-        </button>
-
-        <div className="divider"></div>
-
-        {/* Join Room */}
-        <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-          <input
-            type="text"
-            placeholder="Oda Kodu"
-            className="home-input"
-            value={roomId}
-            onChange={(e) => setRoomId(e.target.value)}
-            style={{ flex: 1, minWidth: 0 }}
-          />
-
-          <button
-            className="btn-ghost"
-            onClick={joinRoom}
-            style={{ width: "auto", padding: "14px 16px", whiteSpace: "nowrap" }}
-          >
-            Katıl
-          </button>
+    <main className="min-h-screen flex flex-col items-center justify-center p-6 bg-white fade-in">
+      <div className="w-full max-w-md space-y-12">
+        <div className="text-center space-y-2">
+          <h1 className="text-4xl font-bold uppercase tracking-tighter">Spot The One</h1>
+          <p className="text-xs uppercase tracking-widest text-gray-dark">Who is most likely?</p>
         </div>
+
+        <Card className="space-y-8 border-none shadow-none p-0">
+          <div className="space-y-6 flex flex-col items-center">
+            <Input
+              placeholder="YOUR NAME"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="text-center uppercase tracking-widest"
+            />
+
+            <Button onClick={createRoom} variant="primary" className="w-auto px-12">
+              Create New Room
+            </Button>
+          </div>
+
+          <div className="relative flex items-center justify-center">
+            <div className="absolute w-full border-t border-gray-mid"></div>
+            <span className="relative bg-white px-4 text-xs text-gray-dark uppercase tracking-widest">or</span>
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex gap-4">
+              <Input
+                placeholder="ROOM CODE"
+                value={roomId}
+                onChange={(e) => setRoomId(e.target.value)}
+                className="text-center uppercase tracking-widest"
+              />
+              <Button onClick={joinRoom} variant="secondary" className="w-auto px-8">
+                Join
+              </Button>
+            </div>
+          </div>
+        </Card>
       </div>
     </main>
   );

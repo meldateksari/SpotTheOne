@@ -1,5 +1,3 @@
-// src/components/Results.tsx
-"use client";
 import { Player } from "@/types";
 import { Bar } from "react-chartjs-2";
 import {
@@ -11,6 +9,8 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
 
 // Chart.js Kaydı
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -32,22 +32,23 @@ export default function Results({
   onNextRound,
 }: ResultsProps) {
   // En çok oy alanı bul (Linç edilecek kişi)
-  const winnerId = Object.keys(votes).reduce((a, b) => 
+  const winnerId = Object.keys(votes).reduce((a, b) =>
     (votes[a] || 0) > (votes[b] || 0) ? a : b
-  , players[0]?.id);
-  
+    , players[0]?.id);
+
   const winner = players.find(p => p.id === winnerId);
 
   const chartData = {
     labels: players.map((p) => p.name),
     datasets: [
       {
-        label: "Oy Sayısı",
+        label: "Votes",
         data: players.map((p) => votes[p.id] || 0),
-        backgroundColor: players.map(p => p.id === winnerId ? "rgba(239, 68, 68, 0.9)" : "rgba(147, 51, 234, 0.6)"), // Kazanan kırmızı, diğerleri mor
-        borderColor: players.map(p => p.id === winnerId ? "rgba(239, 68, 68, 1)" : "rgba(147, 51, 234, 1)"),
-        borderWidth: 2,
-        borderRadius: 8,
+        backgroundColor: players.map(p => p.id === winnerId ? "#000000" : "#e5e5e5"),
+        borderColor: "#000000",
+        borderWidth: 1,
+        borderRadius: 0,
+        barThickness: 40,
       },
     ],
   };
@@ -58,44 +59,63 @@ export default function Results({
     plugins: {
       legend: { display: false },
       title: { display: false },
+      tooltip: {
+        backgroundColor: '#000',
+        titleColor: '#fff',
+        bodyColor: '#fff',
+        cornerRadius: 0,
+        displayColors: false,
+      }
     },
     scales: {
       y: {
-        ticks: { color: "#9CA3AF", stepSize: 1, font: { size: 14 } },
-        grid: { color: "#374151" },
+        ticks: { color: "#888", stepSize: 1, font: { family: 'Inter', size: 12 } },
+        grid: { color: "#f5f5f5" },
         beginAtZero: true,
+        border: { display: false },
       },
       x: {
-        ticks: { color: "white", font: { size: 14, weight: "bold" as const } },
+        ticks: { color: "#000", font: { family: 'Inter', size: 12, weight: "bold" as const } },
         grid: { display: false },
+        border: { display: false },
       },
     },
   };
 
   return (
-    <div className="flex flex-col items-center w-full max-w-5xl mx-auto p-4 min-h-screen">
-      <h2 className="text-gray-400 text-lg font-medium mb-2">Bu soru için kazanan (!)</h2>
-      
-      <div className="bg-red-600/20 border border-red-500/50 px-8 py-4 rounded-xl mb-8 animate-pulse">
-         <h1 className="text-4xl font-black text-red-500">{winner?.name || "Kimse?"}</h1>
+    <div className="w-full max-w-4xl mx-auto p-6 flex flex-col items-center space-y-12 fade-in">
+      <div className="text-center space-y-4">
+        <span className="text-xs font-bold tracking-[0.2em] uppercase text-gray-dark">
+          The Verdict
+        </span>
+        <div className="border border-black p-6 bg-white">
+          <h1 className="text-4xl md:text-6xl font-bold uppercase tracking-tighter text-black">
+            {winner?.name || "No One"}
+          </h1>
+        </div>
       </div>
 
-  <h3 className="text-xl text-white mb-6 text-center italic opacity-80">
-{question ?? "Soru bulunamadı"}
-</h3>
+      <div className="text-center max-w-2xl">
+        <p className="text-sm uppercase tracking-widest text-gray-dark mb-2">Question</p>
+        <h3 className="text-xl md:text-2xl font-medium italic">
+          "{question ?? "Unknown Question"}"
+        </h3>
+      </div>
 
-
-      <div className="w-full h-80 bg-gray-800/50 p-6 rounded-2xl shadow-xl backdrop-blur-sm border border-gray-700">
+      <Card className="w-full h-80 p-6 border-none shadow-none bg-transparent">
         <Bar data={chartData} options={options} />
-      </div>
+      </Card>
 
       {isHost && (
-        <button
-          onClick={onNextRound}
-          className="mt-10 bg-blue-600 hover:bg-blue-500 text-white px-10 py-4 rounded-xl font-bold text-lg shadow-lg shadow-blue-500/30 transition transform hover:-translate-y-1"
-        >
-          Sıradaki Soruya Geç ➡️
-        </button>
+        <div className="w-full max-w-md">
+          <Button
+            onClick={onNextRound}
+            variant="primary"
+            className="w-full"
+          >
+            Next Question
+          </Button>
+        </div>
       )}
     </div>
   );

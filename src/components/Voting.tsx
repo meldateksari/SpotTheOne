@@ -1,6 +1,6 @@
-// src/components/Voting.tsx
-"use client";
 import { Player } from "@/types";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
 
 interface VotingProps {
   question: string;
@@ -20,12 +20,12 @@ export default function Voting({
   onShowResults,
 }: VotingProps) {
   return (
-    <div className="flex flex-col items-center w-full max-w-5xl mx-auto p-4">
-      <div className="mt-4 mb-10 text-center w-full">
-        <span className="text-sm text-purple-400 font-bold tracking-[0.2em] uppercase">
-          Soru
+    <div className="w-full max-w-4xl mx-auto p-6 flex flex-col items-center space-y-12 fade-in">
+      <div className="text-center space-y-4 max-w-2xl">
+        <span className="text-xs font-bold tracking-[0.2em] uppercase text-gray-dark">
+          Question
         </span>
-        <h1 className="text-3xl md:text-5xl font-black text-white mt-4 leading-tight drop-shadow-lg">
+        <h1 className="text-3xl md:text-5xl font-bold uppercase tracking-tighter leading-tight">
           {question}
         </h1>
       </div>
@@ -37,11 +37,10 @@ export default function Voting({
             onClick={() => onVote(player.id)}
             disabled={hasVoted}
             className={`
-              relative overflow-hidden p-6 rounded-2xl text-lg font-bold transition-all duration-200
-              ${
-                hasVoted
-                  ? "bg-gray-800 text-gray-500 cursor-not-allowed border border-gray-700"
-                  : "bg-gray-800 hover:bg-purple-600 text-white shadow-lg hover:shadow-purple-500/50 border border-gray-600 hover:border-purple-400 hover:-translate-y-1"
+              relative p-6 text-sm font-bold uppercase tracking-widest transition-all duration-300 border
+              ${hasVoted
+                ? "bg-gray-light text-gray-400 border-transparent cursor-not-allowed"
+                : "bg-white text-black border-gray-mid hover:bg-black hover:text-white hover:border-black"
               }
             `}
           >
@@ -50,20 +49,23 @@ export default function Voting({
         ))}
       </div>
 
-      <div className="mt-12 text-center h-16">
+      <div className="w-full max-w-md text-center space-y-4">
         {hasVoted && !isHost && (
-          <p className="text-green-400 font-medium animate-bounce">
-            Oyun kullanıldı! Sonuçlar bekleniyor...
-          </p>
+          <div className="p-4 border border-black bg-black text-white">
+            <p className="text-xs uppercase tracking-widest animate-pulse">
+              Vote cast. Waiting for results...
+            </p>
+          </div>
         )}
 
         {isHost && (
-          <button
+          <Button
             onClick={onShowResults}
-            className="bg-red-500 hover:bg-red-600 text-white px-8 py-3 rounded-lg font-bold shadow-lg transition transform active:scale-95"
+            variant="primary"
+            className="w-full"
           >
-            Oylamayı Bitir & Sonuçları Göster 🛑
-          </button>
+            End Voting & Show Results
+          </Button>
         )}
       </div>
     </div>

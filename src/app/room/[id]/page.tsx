@@ -125,11 +125,25 @@ export default function RoomPage() {
   return (
     <main className="room-wrapper fade-in">
       {/* PREMIUM HEADER */}
-      <header className="room-header">
-        <span className="room-header-text">Oda: {roomId}</span>
-        <span className="room-header-text">
-          {currentUser.name} {isHost ? "• Host" : ""}
-        </span>
+      {/* PREMIUM HEADER */}
+      <header className="w-full flex justify-between items-center py-6 border-b border-black mb-8">
+        <div className="flex items-center gap-4">
+          <h1 className="text-xl font-bold uppercase tracking-tighter">Spot The One</h1>
+          <div className="h-4 w-px bg-gray-300"></div>
+          <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-widest">
+            <span className="text-gray-500">Room</span>
+            <span className="text-black">{roomId}</span>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-widest">
+          <span className="text-black">{currentUser.name}</span>
+          {isHost && (
+            <span className="bg-black text-white px-2 py-1 text-[10px] tracking-widest">
+              HOST
+            </span>
+          )}
+        </div>
       </header>
 
       {/* LOBBY */}

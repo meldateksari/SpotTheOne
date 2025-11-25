@@ -1,398 +1,103 @@
-/* ================================
-   GLOBAL PREMIUM BERSHKA / ZARA STYLE
-   ================================ */
+@import "tailwindcss";
 
-/* COLORS */
-:root {
-  --black: #111;
-  --white: #fff;
-  --gray-light: #e6e6e6;
-  --gray-mid: #bababa;
+@theme {
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-serif: "Playfair Display", serif;
+
+  --color-black: #000000;
+  --color-white: #ffffff;
+  --color-gray-light: #f5f5f5;
+  --color-gray-mid: #e5e5e5;
+  --color-gray-dark: #888888;
+
+  --tracking-premium: 0.2em;
 }
 
-/* RESET */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+*/
+@layer base {
+
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
 }
 
-html,
-body {
-  width: 100%;
-  background: var(--white);
-  color: var(--black);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, "Helvetica Neue", Arial, sans-serif;
-
-  letter-spacing: 0.3px;
-}
-
-/* GLOBAL CENTERED CONTAINER (HUGE IMPROVEMENT) */
-.page-wrapper {
-  max-width: 440px;
-  margin: 0 auto;
-  padding: 40px 24px;
-}
-
-/* Focus */
-*:focus {
-  outline: 2px solid var(--black);
-  outline-offset: 2px;
-}
-
-/* ================================
-   BUTTONS (BERSHKA QUALITY)
-   ================================ */
-
-button {
-  appearance: none;
-  cursor: pointer;
+@utility font-premium {
+  font-family: var(--font-sans);
+  letter-spacing: var(--tracking-premium);
   text-transform: uppercase;
-  letter-spacing: 0.6px;
-  user-select: none;
 }
 
-/* Main Button */
-.btn {
-  width: 100%;
-  padding: 14px 0;
-  border: 1px solid var(--black);
-  background: var(--white);
-  color: var(--black);
-  font-size: 14px;
-  transition: all 0.25s ease;
+@layer base {
+  body {
+    @apply bg-white text-black font-sans antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-sans tracking-tight text-black;
+  }
 }
 
-.btn:hover {
-  background: var(--black);
-  color: var(--white);
-}
+@layer components {
+  .btn-primary {
+    @apply w-full py-4 px-6 bg-black text-white text-sm uppercase tracking-widest border border-black transition-all duration-300 hover:bg-white hover:text-black disabled:opacity-50 disabled:cursor-not-allowed;
+  }
 
-/* Ghost Button */
-.btn-ghost {
-  width: 100%;
-  padding: 14px 0;
-  background: transparent;
-  color: var(--black);
-  font-size: 14px;
-  opacity: 0.6;
-  transition: opacity 0.25s ease;
-}
+  .btn-secondary {
+    @apply w-full py-4 px-6 bg-white text-black text-sm uppercase tracking-widest border border-black transition-all duration-300 hover:bg-black hover:text-white disabled:opacity-50 disabled:cursor-not-allowed;
+  }
 
-.btn-ghost:hover {
-  opacity: 1;
-}
+  .btn-ghost {
+    @apply w-full py-4 px-6 bg-transparent text-black text-sm uppercase tracking-widest border border-transparent transition-all duration-300 hover:opacity-60 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
 
-/* ================================
-   INPUTS
-   ================================ */
+  .input-premium {
+    @apply w-full py-4 px-4 bg-white border border-gray-mid text-black text-sm placeholder:text-gray-dark focus:outline-none focus:border-black transition-colors duration-300 rounded-none;
+  }
 
-input {
-  width: 100%;
-  padding: 14px 12px;
-  border: 1px solid var(--gray-light);
-  background: var(--white);
-  color: var(--black);
-  font-size: 15px;
-  letter-spacing: 0.3px;
-  transition: border-color 0.25s ease;
-}
+  .card-premium {
+    @apply bg-white border border-gray-mid p-8 transition-all duration-300 hover:border-black;
+  }
 
-input:focus {
-  border-color: var(--black);
-}
+  .fade-in {
+    @apply animate-[fadeIn_0.6s_ease-out_forwards];
+  }
 
-/* ================================
-   CARD / SECTIONS
-   ================================ */
-
-.card {
-  width: 100%;
-  border: 1px solid var(--gray-light);
-  padding: 28px 22px;
-  background: var(--white);
-  margin-bottom: 32px;
-  transition: border-color 0.25s ease;
-}
-
-.card:hover {
-  border-color: var(--black);
-}
-
-/* ================================
-   ANIMATIONS
-   ================================ */
-
-.fade-in {
-  animation: fadeIn 0.4s ease forwards;
+  .slide-up {
+    @apply animate-[slideUp_0.6s_ease-out_forwards];
+  }
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(8px);
   }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
-
-/* Hover fade */
-.hover-fade {
-  transition: opacity 0.2s ease;
-}
-
-.hover-fade:hover {
-  opacity: 0.6;
-}
-/* LOADING SCREEN */
-.loading-screen {
-  width: 100%;
-  height: 100vh;
-  background: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.spinner {
-  width: 36px;
-  height: 36px;
-  border: 2px solid #000;
-  border-top-color: transparent;
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* PAGE LAYOUT */
-.room-layout {
-  min-height: 100vh;
-  background: #fff;
-  color: #111;
-  display: flex;
-  flex-direction: column;
-}
-
-/* HEADER */
-.room-header {
-  padding: 14px 0;
-  display: flex;
-  justify-content: space-between;
-  border-bottom: 1px solid #e5e5e5;
-  margin-bottom: 18px;
-}
-
-.room-header-text {
-  font-size: 12px;
-  color: #666;
-}
-
-/* =========== HOME LAYOUT =========== */
-
-.home-layout {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-top: 80px;
-  background: #fff;
-  color: #111;
-}
-
-.home-title {
-  font-size: 26px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  margin-bottom: 28px;
-  text-align: center;
-}
-
-/* Card-like container */
-.home-card {
-  width: 100%;
-  max-width: 420px;
-  background: #fff;
-  border: 1px solid var(--gray-light);
-  padding: 26px 22px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-/* Inputs */
-.home-input {
-  width: 100%;
-  padding: 14px 12px;
-  border: 1px solid var(--gray-light);
-  font-size: 15px;
-  letter-spacing: 0.3px;
-}
-
-.home-input:focus {
-  border-color: #000;
-}
-
-/* Smaller input for join row */
-.small-input {
-  flex: 1;
-}
-
-/* Divider */
-.divider {
-  border-top: 1px solid var(--gray-light);
-  margin: 8px 0;
-}
-
-/* Join row */
-.join-row {
-  display: flex;
-  gap: 10px;
-}
-
-/* Join button: ghost style */
-.join-button {
-  padding: 14px 16px;
-  min-width: 80px;
-}
-
-/* Margin top for "Yeni Oda Kur" */
-.mt {
-  margin-top: 4px;
-}
-
-/* ROOM PAGE WRAPPER (Home ile aynı estetik) */
-.room-wrapper {
-  max-width: 440px;
-  margin: 0 auto;
-  padding: 40px 24px;
-  min-height: 100vh;
-}
-
-/* PREMIUM HEADER */
-.room-header {
-  display: flex;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--gray-light);
-  padding-bottom: 12px;
-  margin-bottom: 28px;
-}
-
-.room-header-text {
-  font-size: 13px;
-  color: #666;
-  letter-spacing: 0.3px;
-}
-
-/* Buttonlar HOMEDAKİYLE AYNI */
-.btn {
-  width: 100%;
-  padding: 14px 0;
-  border: 1px solid var(--black);
-  background: var(--white);
-  color: var(--black);
-  font-size: 14px;
-  transition: all 0.25s ease;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  cursor: pointer;
-}
-
-.btn:hover {
-  background: var(--black);
-  color: var(--white);
-}
-
-.btn-ghost {
-  width: 100%;
-  padding: 14px 0;
-  background: transparent;
-  color: var(--black);
-  opacity: 0.6;
-  transition: opacity 0.25s ease;
-  border: none;
-  text-transform: uppercase;
-  cursor: pointer;
-}
-
-.btn-ghost:hover {
-  opacity: 1;
-}
-
-/* ================================
-   LOBBY PAGE
-   ================================ */
-
-.lobby-wrapper {
-  width: 100%;
-  max-width: 440px;
-  margin: 0 auto;
-  padding: 32px 20px;
-  text-align: center;
-}
-
-.lobby-title {
-  font-size: 22px;
-  font-weight: 600;
-  margin-bottom: 20px;
-  letter-spacing: 0.4px;
-}
-
-.lobby-room-id {
-  margin-left: 6px;
-  font-weight: 700;
-  letter-spacing: 2px;
-}
-
-/* QR Box */
-.qr-box {
-  background: var(--white);
-  border: 1px solid var(--gray-light);
-  padding: 18px;
-  margin: 0 auto 28px;
-  width: fit-content;
-}
-
-/* Players Container */
-.players-box {
-  width: 100%;
-  border: 1px solid var(--gray-light);
-  padding: 22px;
-  margin-bottom: 28px;
-  background: white;
-}
-
-.players-title {
-  font-size: 15px;
-  color: #666;
-  margin-bottom: 14px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--gray-light);
-}
-
-.players-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  justify-content: center;
-}
-
-.player-item {
-  padding: 8px 14px;
-  border: 1px solid var(--gray-light);
-  background: #fafafa;
-  letter-spacing: 0.3px;
-}
-
-/* Waiting text */
-.waiting-text {
-  font-size: 14px;
-  color: #777;
-  margin-top: 12px;
-}
-
