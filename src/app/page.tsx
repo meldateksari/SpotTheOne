@@ -35,7 +35,7 @@ export default function Home() {
     if (!name || !roomId) return alert("İsim ve Oda Kodu gerekli!");
     const userId = uuidv4();
     localStorage.setItem("game_user", JSON.stringify({ id: userId, name }));
-    router.push(`/room/${roomId}`);
+    router.push(`/room/${roomId.toUpperCase()}`);
   };
 
   return (
@@ -60,16 +60,21 @@ export default function Home() {
         <div className="divider"></div>
 
         {/* Join Room */}
-        <div className="join-row">
+        <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
           <input
             type="text"
             placeholder="Oda Kodu"
-            className="home-input small-input"
+            className="home-input"
             value={roomId}
-            onChange={(e) => setRoomId(e.target.value.toUpperCase())}
+            onChange={(e) => setRoomId(e.target.value)}
+            style={{ flex: 1, minWidth: 0 }}
           />
 
-          <button className="btn-ghost join-button" onClick={joinRoom}>
+          <button
+            className="btn-ghost"
+            onClick={joinRoom}
+            style={{ width: "auto", padding: "14px 16px", whiteSpace: "nowrap" }}
+          >
             Katıl
           </button>
         </div>
