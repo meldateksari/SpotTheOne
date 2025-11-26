@@ -78,66 +78,63 @@ export default function RoomPage() {
   }, [roomId]);
 
   //odadan cıkma
-const leaveRoom = async () => {
-  if (!roomId || !currentUser || !roomData) return;
+  const leaveRoom = async () => {
+    if (!roomId || !currentUser || !roomData) return;
 
-  const roomRef = doc(db, "rooms", roomId as string);
+    const roomRef = doc(db, "rooms", roomId as string);
 
-  try {
-    // Çıkan oyuncuyu listeden çıkar
-    const updatedPlayers: Player[] = roomData.players.filter(
-      (p) => p.id !== currentUser.id
-    );
+    try {
+      // Çıkan oyuncuyu listeden çıkar
+      const updatedPlayers: Player[] = roomData.players.filter(
+        (p) => p.id !== currentUser.id
+      );
 
-    // Güncellenecek payload tipi
-    const updatePayload: Partial<RoomData> = {
-      players: updatedPlayers
-    };
+      // Güncellenecek payload tipi
+      const updatePayload: Partial<RoomData> = {
+        players: updatedPlayers
+      };
 
-    // Host çıkıyorsa yeni host belirle
-    if (roomData.hostId === currentUser.id) {
-      updatePayload.hostId =
-        updatedPlayers.length > 0 ? updatedPlayers[0].id : undefined;
+      // Host çıkıyorsa yeni host belirle
+      if (roomData.hostId === currentUser.id) {
+        updatePayload.hostId =
+          updatedPlayers.length > 0 ? updatedPlayers[0].id : undefined;
+      }
+
+      await updateDoc(roomRef, updatePayload);
+
+      // Local storage temizle
+      localStorage.removeItem("game_user");
+
+      // Anasayfaya dön
+      window.location.href = "/";
+    } catch (err) {
+      console.error("Leave room error:", err);
     }
-
-    await updateDoc(roomRef, updatePayload);
-
-    // Local storage temizle
-    localStorage.removeItem("game_user");
-
-    // Anasayfaya dön
-    window.location.href = "/";
-  } catch (err) {
-    console.error("Leave room error:", err);
-  }
-};
+  };
 
 
   // Game Actions
   const startGame = async () => {
-    if (!roomId) return;
+    if (!roomId || !roomData) return;
 
-    let questionText = "";
+    const currentRound = roomData.round || 0;
+    const questions = roomData.questions || [];
 
-    try {
-      const res = await fetch("/api/generate-question");
-      if (res.ok) {
-        const data = await res.json();
-        questionText = data.question;
-      }
-    } catch (error) {
-      console.error("Failed to fetch question from API", error);
+    if (currentRound >= questions.length) {
+      // Game Over or Restart?
+      // For now, let's just alert or maybe reset?
+      // Let's just restart for now or show a message.
+      alert("Oyun bitti! Tüm sorular soruldu.");
+      return;
     }
 
-    // Fallback if API fails
-    if (!questionText) {
-      //questionText = questions[Math.floor(Math.random() * questions.length)];
-    }
+    const questionText = questions[currentRound];
 
     await updateDoc(doc(db, "rooms", roomId as string), {
       status: "voting",
       currentQuestion: questionText,
-      votes: {}
+      votes: {},
+      round: currentRound + 1 // Increment round for next time
     });
   };
 
@@ -191,19 +188,19 @@ const leaveRoom = async () => {
               HOST
             </span>
           )}
-            {/* Leave Button */}
-<button
-  onClick={leaveRoom}
-  className="flex items-center gap-1 text-xs font-premium text-red-600 hover:text-red-800 transition-all"
->
-  <span className="material-symbols-outlined">door_open</span>
-  Leave
-</button>
+          {/* Leave Button */}
+          <button
+            onClick={leaveRoom}
+            className="flex items-center gap-1 text-xs font-premium text-red-600 hover:text-red-800 transition-all"
+          >
+            <span className="material-symbols-outlined">door_open</span>
+            Leave
+          </button>
 
 
         </div>
 
-        
+
       </header>
 
       {/* LOBBY */}

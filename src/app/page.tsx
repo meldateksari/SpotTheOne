@@ -12,26 +12,64 @@ import { Card } from "@/components/ui/Card";
 export default function Home() {
   const [name, setName] = useState("");
   const [roomId, setRoomId] = useState("");
+  const [questionCount, setQuestionCount] = useState(10);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const createRoom = async () => {
     if (!name) return alert("Lütfen ismini gir!");
+    if (questionCount < 1 || questionCount > 50) return alert("Soru sayısı 1 ile 50 arasında olmalı!");
 
-    const newRoomId = Math.random().toString(36).substring(2, 8).toUpperCase();
-    const userId = uuidv4();
+    setIsLoading(true);
 
-    localStorage.setItem("game_user", JSON.stringify({ id: userId, name }));
+    try {
+      // 1. Generate questions first
+      const res = await fetch("/api/generate-question", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ count: questionCount }),
+      });
 
-    await setDoc(doc(db, "rooms", newRoomId), {
-      status: "lobby",
-      currentQuestion: "",
-      players: [{ id: userId, name, score: 0 }],
-      votes: {},
-      hostId: userId,
-      round: 0
-    });
+      let questions: string[] = [];
+      if (res.ok) {
+        const data = await res.json();
+        questions = data.questions || [];
+      } else {
+        console.error("Failed to generate questions");
+        // Fallback or alert? For now, let's alert but maybe continue with empty?
+        // Better to stop if we promised questions.
+        alert("Soru oluşturulurken bir hata oluştu. Lütfen tekrar dene.");
+        setIsLoading(false);
+        return;
+      }
 
-    router.push(`/room/${newRoomId}`);
+      if (questions.length === 0) {
+        alert("Hiç soru oluşturulamadı. Lütfen tekrar dene.");
+        setIsLoading(false);
+        return;
+      }
+
+      const newRoomId = Math.random().toString(36).substring(2, 8).toUpperCase();
+      const userId = uuidv4();
+
+      localStorage.setItem("game_user", JSON.stringify({ id: userId, name }));
+
+      await setDoc(doc(db, "rooms", newRoomId), {
+        status: "lobby",
+        currentQuestion: "",
+        questions: questions, // Store all generated questions
+        players: [{ id: userId, name, score: 0 }],
+        votes: {},
+        hostId: userId,
+        round: 0
+      });
+
+      router.push(`/room/${newRoomId}`);
+    } catch (error) {
+      console.error("Error creating room:", error);
+      alert("Oda oluşturulurken bir hata oluştu.");
+      setIsLoading(false);
+    }
   };
 
   const joinRoom = () => {
@@ -40,6 +78,19 @@ export default function Home() {
     localStorage.setItem("game_user", JSON.stringify({ id: userId, name }));
     router.push(`/room/${roomId.toUpperCase()}`);
   };
+
+  if (isLoading) {
+    return (
+      <main className="min-h-screen flex flex-col items-center justify-center p-6 bg-white fade-in">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="spinner"></div>
+          <p className="text-sm uppercase tracking-widest text-gray-dark animate-pulse">
+            Generating {questionCount} Questions...
+          </p>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center p-6 bg-white fade-in">
@@ -57,6 +108,20 @@ export default function Home() {
               onChange={(e) => setName(e.target.value)}
               className="text-center uppercase tracking-widest"
             />
+
+            <div className="w-full flex items-center justify-center gap-4">
+              <label className="text-xs uppercase tracking-widest text-gray-dark whitespace-nowrap">
+                Questions:
+              </label>
+              <Input
+                type="number"
+                min={1}
+                max={50}
+                value={questionCount}
+                onChange={(e) => setQuestionCount(Number(e.target.value))}
+                className="text-center uppercase tracking-widest w-20"
+              />
+            </div>
 
             <Button onClick={createRoom} variant="primary" className="w-auto px-12">
               Create New Room
