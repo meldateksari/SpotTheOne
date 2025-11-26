@@ -80,6 +80,7 @@ export default function RoomPage() {
         setRoomData(data);
 
         if (data.status === "results") setHasVoted(false);
+        if (data.status === "gameover") setShowGameOver(true);
       }
     });
 
@@ -132,7 +133,10 @@ export default function RoomPage() {
     const questions = roomData.questions || [];
 
     if (currentRound >= questions.length) {
-      setShowGameOver(true);
+      // Global Game Over update
+      await updateDoc(doc(db, "rooms", roomId as string), {
+        status: "gameover"
+      });
       return;
     }
 

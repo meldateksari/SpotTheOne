@@ -6,7 +6,7 @@ export interface Player {
 }
 
 export interface RoomData {
-  status: "lobby" | "voting" | "results";
+  status: "lobby" | "voting" | "results" | "gameover";
   players: Player[];
   currentQuestion: string;
   questions?: string[];
