@@ -80,12 +80,27 @@ export default function RoomPage() {
   // Game Actions
   const startGame = async () => {
     if (!roomId) return;
-    const randomQuestion =
-      questions[Math.floor(Math.random() * questions.length)];
+
+    let questionText = "";
+
+    try {
+      const res = await fetch("/api/generate-question");
+      if (res.ok) {
+        const data = await res.json();
+        questionText = data.question;
+      }
+    } catch (error) {
+      console.error("Failed to fetch question from API", error);
+    }
+
+    // Fallback if API fails
+    if (!questionText) {
+      //questionText = questions[Math.floor(Math.random() * questions.length)];
+    }
 
     await updateDoc(doc(db, "rooms", roomId as string), {
       status: "voting",
-      currentQuestion: randomQuestion,
+      currentQuestion: questionText,
       votes: {}
     });
   };
