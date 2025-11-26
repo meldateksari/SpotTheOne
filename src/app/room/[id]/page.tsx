@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { db } from "@/lib/firebase";
 import { doc, onSnapshot, updateDoc, getDoc } from "firebase/firestore";
 import { questions } from "@/utils/questions";
@@ -13,6 +13,7 @@ import Results from "@/components/Results";
 
 export default function RoomPage() {
   const { id: roomId } = useParams();
+  const router = useRouter();
 
   const [currentUser] = useState<Player | null>(() => {
     if (typeof window !== "undefined") {
@@ -96,8 +97,13 @@ export default function RoomPage() {
 
       // Host çıkıyorsa yeni host belirle
       if (roomData.hostId === currentUser.id) {
-        updatePayload.hostId =
-          updatedPlayers.length > 0 ? updatedPlayers[0].id : undefined;
+        if (updatedPlayers.length > 0) {
+          updatePayload.hostId = updatedPlayers[0].id;
+        } else {
+          // Eğer kimse kalmadıysa, oda silinebilir veya hostId boş bırakılabilir.
+          // Şimdilik boş bırakalım veya undefined yapmayalım, string bekliyor olabilir.
+          updatePayload.hostId = "";
+        }
       }
 
       await updateDoc(roomRef, updatePayload);
@@ -105,10 +111,14 @@ export default function RoomPage() {
       // Local storage temizle
       localStorage.removeItem("game_user");
 
-      // Anasayfaya dön
-      window.location.href = "/";
+      // Anasayfaya dön (Router ile)
+      // window.location.href yerine router.push kullanıyoruz
+      // Ancak state update sonrası unmount sorunu olmaması için önce yönlendirip sonra temizleyebiliriz
+      // veya tam tersi.
+      router.push("/");
     } catch (err) {
       console.error("Leave room error:", err);
+      alert("Odadan çıkarken bir hata oluştu.");
     }
   };
 
