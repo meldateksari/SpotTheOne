@@ -49,6 +49,14 @@ export default function Voting({
 
   return (
     <div className="w-full max-w-4xl mx-auto p-6 flex flex-col items-center space-y-12 fade-in">
+      {/* Timer Bar */}
+      <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden mb-4">
+        <div
+          className="h-full bg-black transition-all duration-1000 ease-linear"
+          style={{ width: `${(timeLeft / 10) * 100}%` }}
+        />
+      </div>
+
       <div className="text-center space-y-4 max-w-2xl">
         <span className="text-xs font-bold tracking-[0.2em] uppercase text-gray-dark">
           Question

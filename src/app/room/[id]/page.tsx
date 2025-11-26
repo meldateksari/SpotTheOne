@@ -14,6 +14,9 @@ import { RoomData, Player } from "@/types";
 import Lobby from "@/components/Lobby";
 import Voting from "@/components/Voting";
 import Results from "@/components/Results";
+import GameOverModal from "@/components/GameOverModal";
+
+// ... existing imports ...
 
 export default function RoomPage() {
   const { id: roomId } = useParams();
@@ -29,6 +32,7 @@ export default function RoomPage() {
 
   const [roomData, setRoomData] = useState<RoomData | null>(null);
   const [hasVoted, setHasVoted] = useState(false);
+  const [showGameOver, setShowGameOver] = useState(false);
   const hasJoinedRef = useRef(false);
 
   // Odaya giriş
@@ -104,8 +108,6 @@ export default function RoomPage() {
         if (updatedPlayers.length > 0) {
           updatePayload.hostId = updatedPlayers[0].id;
         } else {
-          // Eğer kimse kalmadıysa, oda silinebilir veya hostId boş bırakılabilir.
-          // Şimdilik boş bırakalım veya undefined yapmayalım, string bekliyor olabilir.
           updatePayload.hostId = "";
         }
       }
@@ -115,10 +117,6 @@ export default function RoomPage() {
       // Local storage temizle
       localStorage.removeItem("game_user");
 
-      // Anasayfaya dön (Router ile)
-      // window.location.href yerine router.push kullanıyoruz
-      // Ancak state update sonrası unmount sorunu olmaması için önce yönlendirip sonra temizleyebiliriz
-      // veya tam tersi.
       router.push("/");
     } catch (err) {
       console.error("Leave room error:", err);
@@ -126,8 +124,6 @@ export default function RoomPage() {
     }
   };
 
-
-  // Game Actions
   // Game Actions
   const startGame = async () => {
     if (!roomId || !roomData) return;
@@ -136,7 +132,7 @@ export default function RoomPage() {
     const questions = roomData.questions || [];
 
     if (currentRound >= questions.length) {
-      alert("Oyun bitti! Tüm sorular soruldu.");
+      setShowGameOver(true);
       return;
     }
 
@@ -187,9 +183,10 @@ export default function RoomPage() {
 
   return (
     <main className="room-wrapper fade-in">
+      {showGameOver && <GameOverModal />}
+
       {/* PREMIUM HEADER */}
-      {/* PREMIUM HEADER */}
-      {/* PREMIUM HEADER (Sub-bar) */}
+      {/* ... existing header ... */}
       <header className="w-full flex justify-between items-center py-4 border-b border-gray-mid mb-8">
         <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-widest">
           <span className="text-gray-500">Room</span>
@@ -211,11 +208,7 @@ export default function RoomPage() {
             <span className="material-symbols-outlined">door_open</span>
             Leave
           </button>
-
-
         </div>
-
-
       </header>
 
       {/* LOBBY */}
