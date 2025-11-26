@@ -98,7 +98,7 @@ export default function Results({
       <div className="text-center max-w-2xl">
         <p className="text-sm uppercase tracking-widest text-gray-dark mb-2">Question</p>
         <h3 className="text-xl md:text-2xl font-medium italic">
-          "{question ?? "Unknown Question"}"
+          {question ?? "Unknown Question"}
         </h3>
       </div>
 
