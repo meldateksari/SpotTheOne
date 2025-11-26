@@ -10,6 +10,10 @@ export const metadata: Metadata = {
   description: "Arkadaş grubunla oynayabileceğin anonim oylama oyunu.",
 };
 
+import Header from "@/components/Header";
+
+// ... imports
+
 export default function RootLayout({
   children,
 }: {
@@ -18,6 +22,7 @@ export default function RootLayout({
   return (
     <html lang="tr">
       <body className={inter.className}>
+        <Header />
         {/* SAYFAYI ORTALAYAN PREMIUM WRAPPER */}
         <div className="page-wrapper">
           {children}
