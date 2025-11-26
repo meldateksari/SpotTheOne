@@ -77,6 +77,42 @@ export default function RoomPage() {
     return () => unsubscribe();
   }, [roomId]);
 
+  //odadan cıkma
+const leaveRoom = async () => {
+  if (!roomId || !currentUser || !roomData) return;
+
+  const roomRef = doc(db, "rooms", roomId as string);
+
+  try {
+    // Çıkan oyuncuyu listeden çıkar
+    const updatedPlayers: Player[] = roomData.players.filter(
+      (p) => p.id !== currentUser.id
+    );
+
+    // Güncellenecek payload tipi
+    const updatePayload: Partial<RoomData> = {
+      players: updatedPlayers
+    };
+
+    // Host çıkıyorsa yeni host belirle
+    if (roomData.hostId === currentUser.id) {
+      updatePayload.hostId =
+        updatedPlayers.length > 0 ? updatedPlayers[0].id : undefined;
+    }
+
+    await updateDoc(roomRef, updatePayload);
+
+    // Local storage temizle
+    localStorage.removeItem("game_user");
+
+    // Anasayfaya dön
+    window.location.href = "/";
+  } catch (err) {
+    console.error("Leave room error:", err);
+  }
+};
+
+
   // Game Actions
   const startGame = async () => {
     if (!roomId) return;
@@ -155,7 +191,19 @@ export default function RoomPage() {
               HOST
             </span>
           )}
+            {/* Leave Button */}
+<button
+  onClick={leaveRoom}
+  className="flex items-center gap-1 text-xs font-premium text-red-600 hover:text-red-800 transition-all"
+>
+  <span className="material-symbols-outlined">door_open</span>
+  Leave
+</button>
+
+
         </div>
+
+        
       </header>
 
       {/* LOBBY */}
