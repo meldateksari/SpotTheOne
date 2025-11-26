@@ -13,4 +13,6 @@ export interface RoomData {
   votes: { [key: string]: number };
   hostId: string;
   round: number;
+  votingStartedAt?: number;
+  votedPlayers?: string[];
 }

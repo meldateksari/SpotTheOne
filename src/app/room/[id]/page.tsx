@@ -3,7 +3,11 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { db } from "@/lib/firebase";
-import { doc, onSnapshot, updateDoc, getDoc } from "firebase/firestore";
+import { doc, onSnapshot, updateDoc, getDoc, arrayUnion } from "firebase/firestore";
+
+// ... existing imports ...
+
+
 import { questions } from "@/utils/questions";
 import { RoomData, Player } from "@/types";
 
@@ -124,6 +128,7 @@ export default function RoomPage() {
 
 
   // Game Actions
+  // Game Actions
   const startGame = async () => {
     if (!roomId || !roomData) return;
 
@@ -131,9 +136,6 @@ export default function RoomPage() {
     const questions = roomData.questions || [];
 
     if (currentRound >= questions.length) {
-      // Game Over or Restart?
-      // For now, let's just alert or maybe reset?
-      // Let's just restart for now or show a message.
       alert("Oyun bitti! Tüm sorular soruldu.");
       return;
     }
@@ -144,7 +146,9 @@ export default function RoomPage() {
       status: "voting",
       currentQuestion: questionText,
       votes: {},
-      round: currentRound + 1 // Increment round for next time
+      votedPlayers: [], // Reset voted players
+      votingStartedAt: Date.now(), // Start timer
+      round: currentRound + 1
     });
   };
 
@@ -157,7 +161,8 @@ export default function RoomPage() {
     const newCount = (currentVotes[targetPlayerId] || 0) + 1;
 
     await updateDoc(doc(db, "rooms", roomId as string), {
-      [`votes.${targetPlayerId}`]: newCount
+      [`votes.${targetPlayerId}`]: newCount,
+      votedPlayers: arrayUnion(currentUser?.id) // Add current user to voted list
     });
   };
 
@@ -232,6 +237,8 @@ export default function RoomPage() {
           onVote={castVote}
           isHost={isHost}
           onShowResults={showResults}
+          votedPlayers={roomData.votedPlayers || []}
+          votingStartedAt={roomData.votingStartedAt || 0}
         />
       )}
 

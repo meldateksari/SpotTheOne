@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Player } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -9,6 +10,8 @@ interface VotingProps {
   onVote: (playerId: string) => void;
   isHost: boolean;
   onShowResults: () => void;
+  votedPlayers: string[];
+  votingStartedAt: number;
 }
 
 export default function Voting({
@@ -18,7 +21,32 @@ export default function Voting({
   onVote,
   isHost,
   onShowResults,
+  votedPlayers,
+  votingStartedAt,
 }: VotingProps) {
+  const [timeLeft, setTimeLeft] = useState(10);
+
+  useEffect(() => {
+    if (!votingStartedAt) return;
+
+    const interval = setInterval(() => {
+      const now = Date.now();
+      const elapsed = Math.floor((now - votingStartedAt) / 1000);
+      const remaining = Math.max(0, 10 - elapsed);
+
+      setTimeLeft(remaining);
+
+      if (remaining === 0) {
+        clearInterval(interval);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [votingStartedAt]);
+
+  const allVoted = votedPlayers.length === players.length;
+  const canShowResults = allVoted || timeLeft === 0;
+
   return (
     <div className="w-full max-w-4xl mx-auto p-6 flex flex-col items-center space-y-12 fade-in">
       <div className="text-center space-y-4 max-w-2xl">
@@ -63,8 +91,12 @@ export default function Voting({
             onClick={onShowResults}
             variant="primary"
             className="w-full"
+            disabled={!canShowResults}
           >
-            End Voting & Show Results
+            {!canShowResults
+              ? `Waiting for votes (${timeLeft}s)...`
+              : "End Voting & Show Results"
+            }
           </Button>
         )}
       </div>
