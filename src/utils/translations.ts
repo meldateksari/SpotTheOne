@@ -49,7 +49,10 @@ export const translations: Record<Language, Record<string, string>> = {
         thanksPlaying: "Oynadığınız için teşekkürler!",
         returnHome: "Anasayfaya Dön",
         chooseAvatar: "Avatar Seç",
-        close: "Kapat"
+        close: "Kapat",
+        chatPlaceholder: "Mesaj yaz...",
+        send: "GÖNDER",
+        chatTitle: "Sohbet"
     },
     en: {
         enterName: "Please enter your name!",
@@ -99,7 +102,10 @@ export const translations: Record<Language, Record<string, string>> = {
         thanksPlaying: "Thanks for playing!",
         returnHome: "Return to Home",
         chooseAvatar: "Choose Avatar",
-        close: "Close"
+        close: "Close",
+        chatPlaceholder: "Type a message...",
+        send: "SEND",
+        chatTitle: "Chat"
     },
     de: {
         enterName: "Bitte gib deinen Namen ein!",
@@ -149,7 +155,10 @@ export const translations: Record<Language, Record<string, string>> = {
         thanksPlaying: "Danke fürs Spielen!",
         returnHome: "Zur Startseite",
         chooseAvatar: "Avatar Wählen",
-        close: "Schließen"
+        close: "Schließen",
+        chatPlaceholder: "Nachricht eingeben...",
+        send: "SENDEN",
+        chatTitle: "Chat"
     },
     es: {
         enterName: "¡Por favor, introduce tu nombre!",
@@ -199,7 +208,10 @@ export const translations: Record<Language, Record<string, string>> = {
         thanksPlaying: "¡Gracias por jugar!",
         returnHome: "Volver al Inicio",
         chooseAvatar: "Elegir Avatar",
-        close: "Cerrar"
+        close: "Cerrar",
+        chatPlaceholder: "Escribe un mensaje...",
+        send: "ENVIAR",
+        chatTitle: "Chat"
     },
     ru: {
         enterName: "Пожалуйста, введите ваше имя!",
@@ -249,6 +261,9 @@ export const translations: Record<Language, Record<string, string>> = {
         thanksPlaying: "Спасибо за игру!",
         returnHome: "Вернуться на Главную",
         chooseAvatar: "Выбрать Аватар",
-        close: "Закрыть"
+        close: "Закрыть",
+        chatPlaceholder: "Введите сообщение...",
+        send: "ОТПРАВИТЬ",
+        chatTitle: "Чат"
     }
 };

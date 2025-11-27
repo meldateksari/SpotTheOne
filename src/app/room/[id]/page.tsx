@@ -20,6 +20,7 @@ import Lobby from "@/components/Lobby";
 import Voting from "@/components/Voting";
 import Results from "@/components/Results";
 import GameOverModal from "@/components/GameOverModal";
+import Chat from "@/components/Chat";
 
 export default function RoomPage() {
   const { id: roomId } = useParams();
@@ -306,6 +307,9 @@ export default function RoomPage() {
           onNextRound={startGame}
         />
       )}
+
+      {/* CHAT */}
+      <Chat roomId={roomId as string} currentUser={currentUser} />
 
     </main>
   );
