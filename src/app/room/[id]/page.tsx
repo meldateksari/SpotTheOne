@@ -220,15 +220,17 @@ export default function RoomPage() {
       )}
 
       {/* Leave Button */}
-      <button
-        onClick={leaveRoom}
-        className="flex items-center gap-1 text-[11px] md:text-xs font-premium text-red-600 hover:text-red-800 transition-all"
-      >
-        <span className="material-symbols-outlined text-[16px] md:text-[20px]">
-          door_open
-        </span>
-        Leave
-      </button>
+ <button
+  onClick={leaveRoom}
+  className="flex items-center gap-1 text-[11px] md:text-xs text-red-600 hover:text-red-800 transition-all"
+>
+  <span className="material-symbols-outlined text-[16px] md:text-[20px]">
+    logout
+  </span>
+  <span className="font-premium">Leave</span>
+</button>
+
+
     </div>
   </header>
 

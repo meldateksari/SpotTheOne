@@ -22,12 +22,12 @@ export default function RootLayout({
   return (
     <html lang="tr">
       <head>
-        {/* Material Symbols icon font */}
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=stars"
-        />
-      </head>
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400&display=swap"
+  />
+</head>
+
 
       {/* footer’ın her zaman aşağıda durması için flex layout */}
       <body className={`${inter.className} min-h-screen flex flex-col`}>
