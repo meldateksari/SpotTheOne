@@ -93,61 +93,90 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center p-6 bg-white fade-in">
-      <div className="w-full max-w-md space-y-12">
-        <div className="text-center space-y-2">
-          <h1 className="text-4xl font-bold uppercase tracking-tighter">Spot The One</h1>
-          <p className="text-xs uppercase tracking-widest text-gray-dark">Who is most likely?</p>
+    <main className="min-h-screen flex flex-col items-center justify-center px-4 py-8 md:px-6 bg-white fade-in">
+  <div className="w-full max-w-sm space-y-10">
+
+    {/* TITLE */}
+    <div className="text-center space-y-2">
+      <h1 className="text-3xl md:text-4xl font-bold uppercase tracking-tighter">
+        Spot The One
+      </h1>
+      <p className="text-[10px] md:text-xs uppercase tracking-widest text-gray-dark">
+        Who is most likely?
+      </p>
+    </div>
+
+    {/* MAIN CARD */}
+    <Card className="space-y-8 border-none shadow-none p-0">
+
+      {/* NAME + QUESTION */}
+      <div className="space-y-6 flex flex-col items-center">
+
+        <Input
+          placeholder="YOUR NAME"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="text-center uppercase tracking-widest w-full"
+        />
+
+        {/* QUESTIONS LINE */}
+        <div className="w-full flex flex-col xs:flex-row items-center justify-center gap-3">
+          <label className="text-[10px] md:text-xs uppercase tracking-widest text-gray-dark whitespace-nowrap">
+            Questions:
+          </label>
+
+          <Input
+            type="number"
+            min={1}
+            max={50}
+            value={questionCount}
+            onChange={(e) => setQuestionCount(Number(e.target.value))}
+            className="text-center uppercase tracking-widest w-24"
+          />
         </div>
 
-        <Card className="space-y-8 border-none shadow-none p-0">
-          <div className="space-y-6 flex flex-col items-center">
-            <Input
-              placeholder="YOUR NAME"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="text-center uppercase tracking-widest"
-            />
-
-            <div className="w-full flex items-center justify-center gap-4">
-              <label className="text-xs uppercase tracking-widest text-gray-dark whitespace-nowrap">
-                Questions:
-              </label>
-              <Input
-                type="number"
-                min={1}
-                max={50}
-                value={questionCount}
-                onChange={(e) => setQuestionCount(Number(e.target.value))}
-                className="text-center uppercase tracking-widest w-20"
-              />
-            </div>
-
-            <Button onClick={createRoom} variant="primary" className="w-auto px-12">
-              Create New Room
-            </Button>
-          </div>
-
-          <div className="relative flex items-center justify-center">
-            <div className="absolute w-full border-t border-gray-mid"></div>
-            <span className="relative bg-white px-4 text-xs text-gray-dark uppercase tracking-widest">or</span>
-          </div>
-
-          <div className="space-y-4">
-            <div className="flex gap-4">
-              <Input
-                placeholder="ROOM CODE"
-                value={roomId}
-                onChange={(e) => setRoomId(e.target.value)}
-                className="text-center uppercase tracking-widest"
-              />
-              <Button onClick={joinRoom} variant="secondary" className="w-auto px-8">
-                Join
-              </Button>
-            </div>
-          </div>
-        </Card>
+        {/* CREATE BUTTON */}
+        <Button
+          onClick={createRoom}
+          variant="primary"
+          className="w-full sm:w-auto px-10 py-4"
+        >
+          Create New Room
+        </Button>
       </div>
-    </main>
+
+      {/* OR DIVIDER */}
+      <div className="relative flex items-center justify-center">
+        <div className="absolute w-full border-t border-gray-mid"></div>
+        <span className="relative bg-white px-4 text-[10px] md:text-xs text-gray-dark uppercase tracking-widest">
+          or
+        </span>
+      </div>
+
+      {/* JOIN ROOM */}
+      <div className="space-y-3">
+
+        <div className="flex flex-col sm:flex-row gap-3 w-full">
+          <Input
+            placeholder="ROOM CODE"
+            value={roomId}
+            onChange={(e) => setRoomId(e.target.value)}
+            className="text-center uppercase tracking-widest w-full"
+          />
+
+          <Button
+            onClick={joinRoom}
+            variant="secondary"
+            className="w-full sm:w-auto px-8 py-4"
+          >
+            Join
+          </Button>
+        </div>
+
+      </div>
+    </Card>
+  </div>
+</main>
+
   );
 }

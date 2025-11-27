@@ -186,69 +186,87 @@ export default function RoomPage() {
   const isHost = roomData.hostId === currentUser.id;
 
   return (
-    <main className="room-wrapper fade-in">
-      {showGameOver && <GameOverModal />}
+ <main className="room-wrapper fade-in px-4 md:px-8 w-full max-w-2xl mx-auto">
+  {showGameOver && <GameOverModal />}
 
-      {/* PREMIUM HEADER */}
-      {/* ... existing header ... */}
-      <header className="w-full flex justify-between items-center py-4 border-b border-gray-mid mb-8">
-        <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-widest">
-          <span className="text-gray-500">Room</span>
-          <span className="text-black font-bold">{roomId}</span>
-        </div>
+  {/* PREMIUM RESPONSIVE HEADER */}
+  <header className="
+      w-full 
+      flex flex-col 
+      md:flex-row 
+      md:justify-between 
+      md:items-center 
+      gap-3 
+      py-4 
+      border-b border-gray-mid 
+      mb-6
+    "
+  >
+    {/* Left */}
+    <div className="flex items-center gap-2 text-[11px] md:text-xs font-medium uppercase tracking-widest">
+      <span className="text-gray-500">Room</span>
+      <span className="text-black font-bold break-all">{roomId}</span>
+    </div>
 
-        <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-widest">
-          <span className="text-black">{currentUser.name}</span>
-          {isHost && (
-            <span className="bg-black text-white px-2 py-1 text-[10px] tracking-widest">
-              HOST
-            </span>
-          )}
-          {/* Leave Button */}
-          <button
-            onClick={leaveRoom}
-            className="flex items-center gap-1 text-xs font-premium text-red-600 hover:text-red-800 transition-all"
-          >
-            <span className="material-symbols-outlined">door_open</span>
-            Leave
-          </button>
-        </div>
-      </header>
+    {/* Right */}
+    <div className="flex items-center gap-2 text-[11px] md:text-xs font-medium uppercase tracking-widest">
+      
+      <span className="text-black break-all">{currentUser.name}</span>
 
-      {/* LOBBY */}
-      {roomData.status === "lobby" && (
-        <Lobby
-          roomId={roomId as string}
-          players={roomData.players}
-          isHost={isHost}
-          onStartGame={startGame}
-        />
+      {isHost && (
+        <span className="bg-black text-white px-2 py-1 text-[9px] md:text-[10px] tracking-widest">
+          HOST
+        </span>
       )}
 
-      {/* VOTING */}
-      {roomData.status === "voting" && (
-        <Voting
-          question={roomData.currentQuestion}
-          players={roomData.players}
-          hasVoted={hasVoted}
-          onVote={castVote}
-          isHost={isHost}
-          onShowResults={showResults}
-          votedPlayers={roomData.votedPlayers || []}
-          votingStartedAt={roomData.votingStartedAt || 0}
-        />
-      )}
+      {/* Leave Button */}
+      <button
+        onClick={leaveRoom}
+        className="flex items-center gap-1 text-[11px] md:text-xs font-premium text-red-600 hover:text-red-800 transition-all"
+      >
+        <span className="material-symbols-outlined text-[16px] md:text-[20px]">
+          door_open
+        </span>
+        Leave
+      </button>
+    </div>
+  </header>
 
-      {/* RESULTS */}
-      {roomData.status === "results" && (
-        <Results
-          question={roomData.currentQuestion}
-          players={roomData.players}
-          votes={roomData.votes}
-          isHost={isHost}
-          onNextRound={startGame}
-        />
-      )}
-    </main>
+  {/* LOBBY */}
+  {roomData.status === "lobby" && (
+    <Lobby
+      roomId={roomId as string}
+      players={roomData.players}
+      isHost={isHost}
+      onStartGame={startGame}
+    />
+  )}
+
+  {/* VOTING */}
+  {roomData.status === "voting" && (
+    <Voting
+      question={roomData.currentQuestion}
+      players={roomData.players}
+      hasVoted={hasVoted}
+      onVote={castVote}
+      isHost={isHost}
+      onShowResults={showResults}
+      votedPlayers={roomData.votedPlayers || []}
+      votingStartedAt={roomData.votingStartedAt || 0}
+    />
+  )}
+
+  {/* RESULTS */}
+  {roomData.status === "results" && (
+    <Results
+      question={roomData.currentQuestion}
+      players={roomData.players}
+      votes={roomData.votes}
+      isHost={isHost}
+      onNextRound={startGame}
+    />
+  )}
+</main>
+
   );
 }

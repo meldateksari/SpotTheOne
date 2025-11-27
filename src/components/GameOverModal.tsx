@@ -17,11 +17,13 @@ export default function GameOverModal() {
             return Math.random() * (max - min) + min;
         };
 
-        const interval: any = setInterval(function () {
+        // ❗ any kaldırıldı
+        const interval: NodeJS.Timeout = setInterval(() => {
             const timeLeft = animationEnd - Date.now();
 
             if (timeLeft <= 0) {
-                return clearInterval(interval);
+                clearInterval(interval);
+                return;
             }
 
             const particleCount = 50 * (timeLeft / duration);
