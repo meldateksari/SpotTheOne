@@ -17,6 +17,7 @@ export default function VoiceChat({ roomId, currentUser, players, voiceParticipa
 
     // State
     const [isInVoice, setIsInVoice] = useState(false);
+    const [isConnecting, setIsConnecting] = useState(false); // New state for connection feedback
     const [peer, setPeer] = useState<Peer | null>(null);
     const [myPeerId, setMyPeerId] = useState<string | null>(null);
 
@@ -42,6 +43,7 @@ export default function VoiceChat({ roomId, currentUser, players, voiceParticipa
     // ===========================================================
     const joinVoice = async () => {
         try {
+            setIsConnecting(true); // Start loading
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
             myStreamRef.current = stream;
 
@@ -59,6 +61,7 @@ export default function VoiceChat({ roomId, currentUser, players, voiceParticipa
                 setMyPeerId(id);
                 setPeer(localPeer);
                 setIsInVoice(true);
+                setIsConnecting(false); // Stop loading
 
                 // Update Firestore: Add me to voiceParticipants AND save my peerId
                 await updateRoomData(id, true);
@@ -69,13 +72,28 @@ export default function VoiceChat({ roomId, currentUser, players, voiceParticipa
                 call.answer(stream);
                 call.on("stream", (remoteStream) => {
                     addAudioStream(call.peer, remoteStream);
+                    // We need to find the participant ID for this peer ID to setup visualizer
+                    // This is tricky because we don't have a direct map here easily without iterating players
+                    // But we can do it in the loop or find it here.
+                    // Let's rely on the useEffect below to setup visualizer for known peers?
+                    // Actually, useEffect handles OUTGOING calls. Incoming calls need handling here.
+                    // We can find the player by peerId
+                    const caller = players.find(p => p.peerId === call.peer);
+                    if (caller) {
+                        setupAudioAnalysis(caller.id, remoteStream);
+                    }
                 });
             });
 
-            localPeer.on("error", (err) => console.error("Peer error:", err));
+            localPeer.on("error", (err) => {
+                console.error("Peer error:", err);
+                setIsConnecting(false);
+                alert("Connection error. Please try again.");
+            });
 
         } catch (err) {
             console.error("Failed to join voice:", err);
+            setIsConnecting(false);
             alert("Microphone access denied or error occurred.");
         }
     };
@@ -90,6 +108,7 @@ export default function VoiceChat({ roomId, currentUser, players, voiceParticipa
         setPeer(null);
         setMyPeerId(null);
         setIsInVoice(false);
+        setIsConnecting(false);
         myStreamRef.current = null;
         peersRef.current = {};
 
@@ -107,6 +126,7 @@ export default function VoiceChat({ roomId, currentUser, players, voiceParticipa
         }
         analysersRef.current = {};
         if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+        setAudioLevels({}); // Reset levels
 
         // Update Firestore
         await updateRoomData(null, false);
@@ -143,14 +163,20 @@ export default function VoiceChat({ roomId, currentUser, players, voiceParticipa
         }
 
         const ctx = audioContextRef.current;
+
+        // Resume context if suspended (browser policy)
+        if (ctx.state === 'suspended') {
+            ctx.resume();
+        }
+
+        // Check if we already have an analyser for this ID to avoid duplicates
+        if (analysersRef.current[id]) return;
+
         const source = ctx.createMediaStreamSource(stream);
         const analyser = ctx.createAnalyser();
-        analyser.fftSize = 32;
+        analyser.fftSize = 64; // Increased slightly for better resolution
+        analyser.smoothingTimeConstant = 0.5; // Smooth out the animation
         source.connect(analyser);
-
-        // If it's a remote stream, we might need to connect to destination to hear it?
-        // No, the Audio element handles playback. We just analyze here.
-        // BUT for local stream, we DON'T connect to destination (to avoid echo).
 
         analysersRef.current[id] = analyser;
 
@@ -195,8 +221,6 @@ export default function VoiceChat({ roomId, currentUser, players, voiceParticipa
 
                 call.on("stream", (remoteStream) => {
                     addAudioStream(participant.peerId!, remoteStream);
-                    // Find participant ID from peer ID is tricky if we don't have a map.
-                    // But we know 'participant.id' corresponds to 'participant.peerId'.
                     setupAudioAnalysis(participant.id, remoteStream);
                 });
 
@@ -318,9 +342,17 @@ export default function VoiceChat({ roomId, currentUser, players, voiceParticipa
                             <div className="w-full flex justify-center">
                                 <button
                                     onClick={joinVoice}
-                                    className="bg-black text-white w-full py-2 rounded-lg uppercase tracking-widest text-xs font-bold hover:bg-gray-800 transition-colors"
+                                    disabled={isConnecting}
+                                    className="bg-black text-white w-full py-2 rounded-lg uppercase tracking-widest text-xs font-bold hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                                 >
-                                    {t("joinVoice")}
+                                    {isConnecting ? (
+                                        <>
+                                            <span className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                                            Connecting...
+                                        </>
+                                    ) : (
+                                        t("joinVoice")
+                                    )}
                                 </button>
                             </div>
                         )}
@@ -336,7 +368,7 @@ export default function VoiceChat({ roomId, currentUser, players, voiceParticipa
 
                             // Audio Level (0-255)
                             const level = audioLevels[pid] || 0;
-                            const isSpeaking = level > 10; // Threshold
+                            const isSpeaking = level > 5; // Lowered threshold slightly
 
                             return (
                                 <div key={pid} className="flex items-center justify-between text-sm">
@@ -345,10 +377,10 @@ export default function VoiceChat({ roomId, currentUser, players, voiceParticipa
                                             <img src={`/animals/${p.avatar}`} className="w-full h-full rounded-full bg-gray-100 object-cover" />
                                             {/* Waveform Animation Overlay */}
                                             {isSpeaking && (
-                                                <div className="absolute inset-0 flex items-center justify-center gap-[2px]">
-                                                    <div className="w-[2px] bg-green-500 animate-pulse h-3"></div>
-                                                    <div className="w-[2px] bg-green-500 animate-pulse h-5 delay-75"></div>
-                                                    <div className="w-[2px] bg-green-500 animate-pulse h-3 delay-150"></div>
+                                                <div className="absolute inset-0 flex items-center justify-center gap-[2px] bg-black/20 rounded-full">
+                                                    <div className="w-[2px] bg-green-400 animate-pulse h-3"></div>
+                                                    <div className="w-[2px] bg-green-400 animate-pulse h-5 delay-75"></div>
+                                                    <div className="w-[2px] bg-green-400 animate-pulse h-3 delay-150"></div>
                                                 </div>
                                             )}
                                         </div>
