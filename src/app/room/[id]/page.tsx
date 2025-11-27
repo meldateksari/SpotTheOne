@@ -204,15 +204,14 @@ export default function RoomPage() {
             className="space-y-4"
           >
 
-            <Input
-              name="name"
-              placeholder={t("yourName")}
-              className="text-center uppercase tracking-widest"
-              required
-            />
-
-            <div className="flex justify-center">
+            <div className="flex w-full gap-2">
               <AvatarSelector value={tempAvatar} onChange={setTempAvatar} />
+              <Input
+                name="name"
+                placeholder={t("yourName")}
+                className="text-center uppercase tracking-widest w-full"
+                required
+              />
             </div>
 
             <Button type="submit" variant="primary" className="w-full">
@@ -236,7 +235,7 @@ export default function RoomPage() {
   // ===========================================================
   return (
     <main className="room-wrapper fade-in px-4 md:px-8 w-full max-w-2xl mx-auto">
-      
+
       {showGameOver && <GameOverModal />}
 
       {/* HEADER */}
@@ -281,6 +280,7 @@ export default function RoomPage() {
           players={roomData.players}
           isHost={isHost}
           onStartGame={startGame}
+          hostId={roomData.hostId}
         />
       )}
 

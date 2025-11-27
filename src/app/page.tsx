@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card } from "@/components/ui/Card";
 import { useLanguage } from "@/context/LanguageContext";
-import LanguageSelector from "@/components/LanguageSelector";
 import AvatarSelector from "@/components/AvatarSelector";
 
 export default function Home() {
@@ -133,9 +132,8 @@ export default function Home() {
   // -------------------------------------------------------
   return (
     <main className="min-h-screen flex flex-col items-center justify-center px-4 py-8 bg-white">
-      <div className="absolute top-4 right-4">
-        <LanguageSelector />
-      </div>
+
+
 
       <div className="w-full max-w-sm space-y-10">
         <div className="text-center space-y-2">
@@ -149,16 +147,16 @@ export default function Home() {
 
         <Card className="space-y-8 p-0 border-none shadow-none">
           <div className="space-y-6 flex flex-col items-center">
-            {/* NAME */}
-            <Input
-              placeholder={t("yourName")}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="text-center uppercase tracking-widest w-full"
-            />
-
-            {/* AVATAR */}
-            <AvatarSelector value={avatar} onChange={setAvatar} />
+            {/* NAME & AVATAR ROW */}
+            <div className="flex w-full gap-2">
+              <AvatarSelector value={avatar} onChange={setAvatar} />
+              <Input
+                placeholder={t("yourName")}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="text-center uppercase tracking-widest w-full"
+              />
+            </div>
 
             {/* QUESTIONS */}
             <div className="w-full flex items-center justify-center gap-3">
@@ -207,7 +205,7 @@ export default function Home() {
           </div>
 
           {/* JOIN */}
-          <div className="space-y-3">
+          <div className="flex w-full gap-2">
             <Input
               placeholder={t("roomCode")}
               value={roomId}
@@ -218,7 +216,7 @@ export default function Home() {
             <Button
               onClick={joinRoom}
               variant="secondary"
-              className="w-full px-10 py-4"
+              className="w-auto px-6"
             >
               {t("join")}
             </Button>

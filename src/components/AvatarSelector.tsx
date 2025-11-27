@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
 
+import { useLanguage } from "@/context/LanguageContext";
+
 const AVATARS = [
   "bear.png", "buffalo.png", "chick.png", "chicken.png", "cow.png",
   "crocodile.png", "dog.png", "duck.png", "elephant.png", "frog.png",
@@ -13,17 +15,21 @@ const AVATARS = [
 export default function AvatarSelector({
   value,
   onChange,
+  className,
 }: {
   value?: string;
   onChange: (avatar: string) => void;
+  className?: string;
 }) {
   const [open, setOpen] = useState(false);
+  const { t } = useLanguage();
 
   return (
     <>
       <button
+        type="button"
         onClick={() => setOpen(true)}
-        className="w-12 h-12 border border-gray-mid flex items-center justify-center hover:opacity-70 transition rounded"
+        className={`w-[80px] h-[54px] border border-gray-mid flex items-center justify-center hover:opacity-70 transition bg-white rounded-none ${className}`}
       >
         {value ? (
           <img
@@ -48,13 +54,14 @@ export default function AvatarSelector({
             onClick={(e) => e.stopPropagation()}
           >
             <h2 className="text-center text-sm mb-4 uppercase tracking-widest text-gray-dark">
-              Choose Avatar
+              {t("chooseAvatar")}
             </h2>
 
             <div className="grid grid-cols-4 gap-4 max-h-80 overflow-y-auto">
               {AVATARS.map((file) => (
                 <button
                   key={file}
+                  type="button"
                   onClick={() => {
                     onChange(file);
                     setOpen(false);
@@ -71,10 +78,11 @@ export default function AvatarSelector({
             </div>
 
             <button
+              type="button"
               onClick={() => setOpen(false)}
               className="mt-4 w-full py-2 text-xs uppercase tracking-widest border border-black hover:bg-black hover:text-white transition rounded"
             >
-              Close
+              {t("close")}
             </button>
           </div>
         </div>

@@ -9,9 +9,10 @@ interface LobbyProps {
   players: Player[];
   isHost: boolean;
   onStartGame: () => void;
+  hostId?: string;
 }
 
-export default function Lobby({ roomId, players, isHost, onStartGame }: LobbyProps) {
+export default function Lobby({ roomId, players, isHost, onStartGame, hostId }: LobbyProps) {
   const { t } = useLanguage();
   const shareUrl =
     typeof window !== "undefined"
@@ -44,9 +45,14 @@ export default function Lobby({ roomId, players, isHost, onStartGame }: LobbyPro
           {players.map((p) => (
             <div
               key={p.id}
-              className="bg-gray-light p-3 text-sm text-center uppercase tracking-wide border border-transparent hover:border-black transition-colors"
+              className="bg-gray-light p-3 text-sm text-center uppercase tracking-wide border border-transparent hover:border-black transition-colors flex items-center justify-center gap-1 overflow-hidden"
             >
-              {p.name}
+              {p.id === hostId && (
+                <span className="material-symbols-outlined text-[16px] text-yellow-600">
+                  crown
+                </span>
+              )}
+              <span className="truncate w-full">{p.name}</span>
             </div>
           ))}
         </div>

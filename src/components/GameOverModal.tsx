@@ -5,8 +5,11 @@ import confetti from "canvas-confetti";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 
+import { useLanguage } from "@/context/LanguageContext";
+
 export default function GameOverModal() {
     const router = useRouter();
+    const { t } = useLanguage();
 
     useEffect(() => {
         const duration = 3 * 1000;
@@ -53,17 +56,17 @@ export default function GameOverModal() {
             <div className="bg-white p-12 max-w-md w-full text-center space-y-8 relative overflow-hidden">
                 <div className="space-y-4">
                     <h2 className="text-4xl font-bold uppercase tracking-tighter">
-                        Game Over
+                        {t("gameOver")}
                     </h2>
                     <p className="text-sm uppercase tracking-widest text-gray-dark">
-                        Thanks for playing!
+                        {t("thanksPlaying")}
                     </p>
                 </div>
 
                 <div className="w-full border-t border-gray-mid"></div>
 
                 <Button onClick={handleHome} variant="primary" className="w-full">
-                    Return to Home
+                    {t("returnHome")}
                 </Button>
             </div>
         </div>

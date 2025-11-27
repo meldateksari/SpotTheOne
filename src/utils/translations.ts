@@ -44,7 +44,12 @@ export const translations: Record<Language, Record<string, string>> = {
         votes: "Oylar",
         winner: "Kazanan",
         home: "Anasayfa",
-        madeBy: "Yapımcılar:"
+        madeBy: "Yapımcılar:",
+        gameOver: "Oyun Bitti",
+        thanksPlaying: "Oynadığınız için teşekkürler!",
+        returnHome: "Anasayfaya Dön",
+        chooseAvatar: "Avatar Seç",
+        close: "Kapat"
     },
     en: {
         enterName: "Please enter your name!",
@@ -89,7 +94,12 @@ export const translations: Record<Language, Record<string, string>> = {
         votes: "Votes",
         winner: "Winner",
         home: "Home",
-        madeBy: "Made by"
+        madeBy: "Made by",
+        gameOver: "Game Over",
+        thanksPlaying: "Thanks for playing!",
+        returnHome: "Return to Home",
+        chooseAvatar: "Choose Avatar",
+        close: "Close"
     },
     de: {
         enterName: "Bitte gib deinen Namen ein!",
@@ -134,7 +144,12 @@ export const translations: Record<Language, Record<string, string>> = {
         votes: "Stimmen",
         winner: "Gewinner",
         home: "Startseite",
-        madeBy: "Gemacht von"
+        madeBy: "Gemacht von",
+        gameOver: "Spiel Vorbei",
+        thanksPlaying: "Danke fürs Spielen!",
+        returnHome: "Zur Startseite",
+        chooseAvatar: "Avatar Wählen",
+        close: "Schließen"
     },
     es: {
         enterName: "¡Por favor, introduce tu nombre!",
@@ -179,7 +194,12 @@ export const translations: Record<Language, Record<string, string>> = {
         votes: "Votos",
         winner: "Ganador",
         home: "Inicio",
-        madeBy: "Hecho por"
+        madeBy: "Hecho por",
+        gameOver: "Juego Terminado",
+        thanksPlaying: "¡Gracias por jugar!",
+        returnHome: "Volver al Inicio",
+        chooseAvatar: "Elegir Avatar",
+        close: "Cerrar"
     },
     ru: {
         enterName: "Пожалуйста, введите ваше имя!",
@@ -224,6 +244,11 @@ export const translations: Record<Language, Record<string, string>> = {
         votes: "Голоса",
         winner: "Победитель",
         home: "Главная",
-        madeBy: "Сделано"
+        madeBy: "Сделано",
+        gameOver: "Игра Окончена",
+        thanksPlaying: "Спасибо за игру!",
+        returnHome: "Вернуться на Главную",
+        chooseAvatar: "Выбрать Аватар",
+        close: "Закрыть"
     }
 };
