@@ -4,6 +4,10 @@ import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { db } from "@/lib/firebase";
 import { doc, onSnapshot, updateDoc, getDoc, arrayUnion } from "firebase/firestore";
+import { v4 as uuidv4 } from "uuid";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Card } from "@/components/ui/Card";
 
 // ... existing imports ...
 
@@ -22,7 +26,7 @@ export default function RoomPage() {
   const { id: roomId } = useParams();
   const router = useRouter();
 
-  const [currentUser] = useState<Player | null>(() => {
+  const [currentUser, setCurrentUser] = useState<Player | null>(() => {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem("game_user");
       return saved ? JSON.parse(saved) : null;
@@ -175,7 +179,8 @@ export default function RoomPage() {
   };
 
   // Loading ekranı
-  if (!roomData || !currentUser) {
+  // Loading ekranı (Sadece roomData yoksa)
+  if (!roomData) {
     return (
       <div className="loading-screen">
         <div className="spinner"></div>
@@ -183,14 +188,55 @@ export default function RoomPage() {
     );
   }
 
+  // Eğer kullanıcı yoksa (QR ile gelmişse) isim isteme ekranı
+  if (!currentUser) {
+    return (
+      <main className="min-h-screen flex flex-col items-center justify-center p-4 bg-white fade-in">
+        <Card className="w-full max-w-sm p-8 space-y-6">
+          <div className="text-center space-y-2">
+            <h2 className="text-xl font-bold uppercase tracking-tighter">Join Room</h2>
+            <p className="text-xs uppercase tracking-widest text-gray-dark">Enter your name to join</p>
+          </div>
+
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              const name = formData.get("name") as string;
+              if (!name.trim()) return;
+
+              const userId = uuidv4();
+              const user = { id: userId, name: name.trim(), score: 0 }; // Initialize score
+
+              localStorage.setItem("game_user", JSON.stringify(user));
+              setCurrentUser(user);
+            }}
+            className="space-y-4"
+          >
+            <Input
+              name="name"
+              placeholder="YOUR NAME"
+              className="text-center uppercase tracking-widest"
+              autoFocus
+              required
+            />
+            <Button type="submit" variant="primary" className="w-full">
+              Join Game
+            </Button>
+          </form>
+        </Card>
+      </main>
+    );
+  }
+
   const isHost = roomData.hostId === currentUser.id;
 
   return (
- <main className="room-wrapper fade-in px-4 md:px-8 w-full max-w-2xl mx-auto">
-  {showGameOver && <GameOverModal />}
+    <main className="room-wrapper fade-in px-4 md:px-8 w-full max-w-2xl mx-auto">
+      {showGameOver && <GameOverModal />}
 
-  {/* PREMIUM RESPONSIVE HEADER */}
-  <header className="
+      {/* PREMIUM RESPONSIVE HEADER */}
+      <header className="
       w-full 
       flex flex-col 
       md:flex-row 
@@ -201,74 +247,74 @@ export default function RoomPage() {
       border-b border-gray-mid 
       mb-6
     "
-  >
-    {/* Left */}
-    <div className="flex items-center gap-2 text-[11px] md:text-xs font-medium uppercase tracking-widest">
-      <span className="text-gray-500">Room</span>
-      <span className="text-black font-bold break-all">{roomId}</span>
-    </div>
+      >
+        {/* Left */}
+        <div className="flex items-center gap-2 text-[11px] md:text-xs font-medium uppercase tracking-widest">
+          <span className="text-gray-500">Room</span>
+          <span className="text-black font-bold break-all">{roomId}</span>
+        </div>
 
-    {/* Right */}
-    <div className="flex items-center gap-2 text-[11px] md:text-xs font-medium uppercase tracking-widest">
-      
-      <span className="text-black break-all">{currentUser.name}</span>
+        {/* Right */}
+        <div className="flex items-center gap-2 text-[11px] md:text-xs font-medium uppercase tracking-widest">
 
-      {isHost && (
-        <span className="bg-black text-white px-2 py-1 text-[9px] md:text-[10px] tracking-widest">
-          HOST
-        </span>
+          <span className="text-black break-all">{currentUser.name}</span>
+
+          {isHost && (
+            <span className="bg-black text-white px-2 py-1 text-[9px] md:text-[10px] tracking-widest">
+              HOST
+            </span>
+          )}
+
+          {/* Leave Button */}
+          <button
+            onClick={leaveRoom}
+            className="flex items-center gap-1 text-[11px] md:text-xs text-red-600 hover:text-red-800 transition-all"
+          >
+            <span className="material-symbols-outlined text-[16px] md:text-[20px]">
+              logout
+            </span>
+            <span className="font-premium">Leave</span>
+          </button>
+
+
+        </div>
+      </header>
+
+      {/* LOBBY */}
+      {roomData.status === "lobby" && (
+        <Lobby
+          roomId={roomId as string}
+          players={roomData.players}
+          isHost={isHost}
+          onStartGame={startGame}
+        />
       )}
 
-      {/* Leave Button */}
- <button
-  onClick={leaveRoom}
-  className="flex items-center gap-1 text-[11px] md:text-xs text-red-600 hover:text-red-800 transition-all"
->
-  <span className="material-symbols-outlined text-[16px] md:text-[20px]">
-    logout
-  </span>
-  <span className="font-premium">Leave</span>
-</button>
+      {/* VOTING */}
+      {roomData.status === "voting" && (
+        <Voting
+          question={roomData.currentQuestion}
+          players={roomData.players}
+          hasVoted={hasVoted}
+          onVote={castVote}
+          isHost={isHost}
+          onShowResults={showResults}
+          votedPlayers={roomData.votedPlayers || []}
+          votingStartedAt={roomData.votingStartedAt || 0}
+        />
+      )}
 
-
-    </div>
-  </header>
-
-  {/* LOBBY */}
-  {roomData.status === "lobby" && (
-    <Lobby
-      roomId={roomId as string}
-      players={roomData.players}
-      isHost={isHost}
-      onStartGame={startGame}
-    />
-  )}
-
-  {/* VOTING */}
-  {roomData.status === "voting" && (
-    <Voting
-      question={roomData.currentQuestion}
-      players={roomData.players}
-      hasVoted={hasVoted}
-      onVote={castVote}
-      isHost={isHost}
-      onShowResults={showResults}
-      votedPlayers={roomData.votedPlayers || []}
-      votingStartedAt={roomData.votingStartedAt || 0}
-    />
-  )}
-
-  {/* RESULTS */}
-  {roomData.status === "results" && (
-    <Results
-      question={roomData.currentQuestion}
-      players={roomData.players}
-      votes={roomData.votes}
-      isHost={isHost}
-      onNextRound={startGame}
-    />
-  )}
-</main>
+      {/* RESULTS */}
+      {roomData.status === "results" && (
+        <Results
+          question={roomData.currentQuestion}
+          players={roomData.players}
+          votes={roomData.votes}
+          isHost={isHost}
+          onNextRound={startGame}
+        />
+      )}
+    </main>
 
   );
 }
