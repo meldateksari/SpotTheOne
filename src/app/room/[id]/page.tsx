@@ -21,6 +21,7 @@ import Voting from "@/components/Voting";
 import Results from "@/components/Results";
 import GameOverModal from "@/components/GameOverModal";
 import Chat from "@/components/Chat";
+import VoiceChat from "@/components/VoiceChat";
 
 export default function RoomPage() {
   const { id: roomId } = useParams();
@@ -310,6 +311,14 @@ export default function RoomPage() {
 
       {/* CHAT */}
       <Chat roomId={roomId as string} currentUser={currentUser} />
+
+      {/* VOICE CHAT */}
+      <VoiceChat
+        roomId={roomId as string}
+        currentUser={currentUser}
+        players={roomData.players}
+        voiceParticipants={roomData.voiceParticipants || []}
+      />
 
     </main>
   );

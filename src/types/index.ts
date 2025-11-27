@@ -4,6 +4,7 @@ export interface Player {
   name: string;
   score?: number;
   avatar: string;
+  peerId?: string;
 }
 
 export interface RoomData {
@@ -17,6 +18,7 @@ export interface RoomData {
   votingStartedAt?: number;
   votedPlayers?: string[];
   language?: string;
+  voiceParticipants?: string[];
 }
 
 export interface Message {

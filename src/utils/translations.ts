@@ -52,7 +52,15 @@ export const translations: Record<Language, Record<string, string>> = {
         close: "Kapat",
         chatPlaceholder: "Mesaj yaz...",
         send: "GÖNDER",
-        chatTitle: "Sohbet"
+        chatTitle: "Sohbet",
+        joinVoice: "SESLİ ODAYA KATIL",
+        leaveVoice: "AYRIL",
+        voiceRoom: "Ses Odası",
+        mute: "Sustur",
+        unmute: "Sesi Aç",
+        deafen: "Sağırlaştır",
+        undeafen: "Duy",
+        you: "Sen"
     },
     en: {
         enterName: "Please enter your name!",
@@ -105,7 +113,15 @@ export const translations: Record<Language, Record<string, string>> = {
         close: "Close",
         chatPlaceholder: "Type a message...",
         send: "SEND",
-        chatTitle: "Chat"
+        chatTitle: "Chat",
+        joinVoice: "JOIN VOICE ROOM",
+        leaveVoice: "LEAVE",
+        voiceRoom: "Voice Room",
+        mute: "Mute",
+        unmute: "Unmute",
+        deafen: "Deafen",
+        undeafen: "Undeafen",
+        you: "You"
     },
     de: {
         enterName: "Bitte gib deinen Namen ein!",
@@ -158,7 +174,15 @@ export const translations: Record<Language, Record<string, string>> = {
         close: "Schließen",
         chatPlaceholder: "Nachricht eingeben...",
         send: "SENDEN",
-        chatTitle: "Chat"
+        chatTitle: "Chat",
+        joinVoice: "BEITRETEN",
+        leaveVoice: "VERLASSEN",
+        voiceRoom: "Sprachraum",
+        mute: "Stumm",
+        unmute: "Laut",
+        deafen: "Taub",
+        undeafen: "Hören",
+        you: "Du"
     },
     es: {
         enterName: "¡Por favor, introduce tu nombre!",
@@ -211,7 +235,15 @@ export const translations: Record<Language, Record<string, string>> = {
         close: "Cerrar",
         chatPlaceholder: "Escribe un mensaje...",
         send: "ENVIAR",
-        chatTitle: "Chat"
+        chatTitle: "Chat",
+        joinVoice: "UNIRSE AL AUDIO",
+        leaveVoice: "SALIR",
+        voiceRoom: "Sala de Audio",
+        mute: "Silenciar",
+        unmute: "Activar",
+        deafen: "Ensordecer",
+        undeafen: "Escuchar",
+        you: "Tú"
     },
     ru: {
         enterName: "Пожалуйста, введите ваше имя!",
@@ -264,6 +296,14 @@ export const translations: Record<Language, Record<string, string>> = {
         close: "Закрыть",
         chatPlaceholder: "Введите сообщение...",
         send: "ОТПРАВИТЬ",
-        chatTitle: "Чат"
+        chatTitle: "Чат",
+        joinVoice: "ВОЙТИ В ЧАТ",
+        leaveVoice: "ВЫЙТИ",
+        voiceRoom: "Голосовой Чат",
+        mute: "Мут",
+        unmute: "Анмут",
+        deafen: "Заглушить",
+        undeafen: "Слушать",
+        you: "Вы"
     }
 };

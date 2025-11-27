@@ -16,6 +16,7 @@
     "clsx": "^2.1.1",
     "firebase": "^12.6.0",
     "next": "16.0.4",
+    "peerjs": "^1.5.5",
     "qrcode.react": "^4.2.0",
     "react": "19.2.0",
     "react-chartjs-2": "^5.3.1",
