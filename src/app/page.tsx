@@ -15,20 +15,33 @@ export default function Home() {
   const [questionCount, setQuestionCount] = useState(10);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const [category, setCategory] = useState("general");
 
-  const createRoom = async () => {
+const categories = [
+  { key: "love", label: "Love" },
+  { key: "general", label: "General" },
+  { key: "friendship", label: "Friendship" },
+  { key: "funny", label: "Funny" },
+  { key: "career", label: "Career" },
+];
+
+
+const createRoom = async () => {
     if (!name) return alert("Lütfen ismini gir!");
     if (questionCount < 1 || questionCount > 50) return alert("Soru sayısı 1 ile 50 arasında olmalı!");
 
     setIsLoading(true);
 
     try {
-      // 1. Generate questions first
       const res = await fetch("/api/generate-question", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ count: questionCount }),
+        body: JSON.stringify({ 
+          count: questionCount,
+          category: category  // <-- kategoriler gelior
+        }),
       });
+
 
       let questions: string[] = [];
       if (res.ok) {
@@ -134,6 +147,20 @@ export default function Home() {
             className="text-center uppercase tracking-widest w-24"
           />
         </div>
+        {/* CATEGORY SELECT */}
+<div className="flex flex-wrap justify-center gap-2">
+  {categories.map((cat) => (
+    <Button
+      key={cat.key}
+      variant={category === cat.key ? "primary" : "secondary"}
+      className="px-4 py-2 text-xs"
+      onClick={() => setCategory(cat.key)}
+    >
+      {cat.label}
+    </Button>
+  ))}
+</div>
+
 
         {/* CREATE BUTTON */}
         <Button
@@ -174,6 +201,7 @@ export default function Home() {
         </div>
 
       </div>
+      
     </Card>
   </div>
 </main>
