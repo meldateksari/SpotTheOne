@@ -10,9 +10,9 @@ export const metadata: Metadata = {
   description: "Arkadaş grubunla oynayabileceğin anonim oylama oyunu.",
 };
 
+// Components
 import Header from "@/components/Header";
-
-// ... imports
+import Footer from "@/components/Footer";
 
 export default function RootLayout({
   children,
@@ -21,12 +21,25 @@ export default function RootLayout({
 }) {
   return (
     <html lang="tr">
-      <body className={inter.className}>
+      <head>
+        {/* Material Symbols icon font */}
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=stars"
+        />
+      </head>
+
+      {/* footer’ın her zaman aşağıda durması için flex layout */}
+      <body className={`${inter.className} min-h-screen flex flex-col`}>
         <Header />
-        {/* SAYFAYI ORTALAYAN PREMIUM WRAPPER */}
-        <div className="page-wrapper">
+
+        {/* Sayfa içeriği */}
+        <div className="page-wrapper flex-grow">
           {children}
         </div>
+
+        {/* Her sayfada en altta görünen footer */}
+        <Footer />
       </body>
     </html>
   );
