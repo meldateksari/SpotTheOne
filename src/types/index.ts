@@ -15,4 +15,5 @@ export interface RoomData {
   round: number;
   votingStartedAt?: number;
   votedPlayers?: string[];
+  language?: string;
 }

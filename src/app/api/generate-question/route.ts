@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 
 // Allowed category values
 type CategoryType = "love" | "general" | "friendship" | "funny" | "career";
+type LanguageType = "tr" | "en" | "de" | "es" | "ru";
 
 export async function POST(request: Request) {
   try {
@@ -19,8 +20,9 @@ export async function POST(request: Request) {
 
     const count: number = body.count || 10;
     const category: CategoryType = body.category || "general";
+    const language: LanguageType = body.language || "tr";
 
-    // Category descriptions in Turkish
+    // Category descriptions in Turkish (used for context)
     const categoryDescriptions = {
       love: "Aşk, romantizm ve ilişkiler",
       general: "Genel ve karışık konular",
@@ -29,20 +31,32 @@ export async function POST(request: Request) {
       career: "İş hayatı ve kariyer"
     } as const;
 
+    const languageNames = {
+      tr: "Turkish",
+      en: "English",
+      de: "German",
+      es: "Spanish",
+      ru: "Russian"
+    };
+
     const categoryText = categoryDescriptions[category];
+    const targetLanguage = languageNames[language];
 
     const prompt = `
       Sen "Spot The One" isimli bir parti oyununun sunucususun.
       Oyuncular bir soruyu görür ve grubun içinden soruya en çok kimin uyduğunu seçer.
 
       Kategori: ${categoryText}
+      Hedef Dil: ${targetLanguage}
 
       Lütfen bu kategoriye uygun ${count} adet eğlenceli, yaratıcı ve birbirinden tamamen farklı soru oluştur.
-
-      Sorular şu kalıplardan biriyle başlamalı:
-      - "En çok kim..."
-      - "Kim..."
-      - "Hangi arkadaşımız..."
+      
+      ÖNEMLİ: Sorular TAMAMEN ${targetLanguage} dilinde olmalı.
+      
+      Sorular şu kalıplardan biriyle başlamalı (veya hedef dildeki karşılığıyla):
+      - "En çok kim..." (Who is most likely to...)
+      - "Kim..." (Who...)
+      - "Hangi arkadaşımız..." (Which friend...)
 
       Sorular komik, eğlenceli, biraz utandırıcı veya düşündürücü olabilir.
 

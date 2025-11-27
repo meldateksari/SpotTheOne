@@ -1,7 +1,7 @@
-// src/app/layout.tsx
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { LanguageProvider } from "@/context/LanguageContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,26 +20,27 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="tr">
+    <html lang="en">
       <head>
-  <link
-    rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400&display=swap"
-  />
-</head>
-
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400&display=swap"
+        />
+      </head>
 
       {/* footer’ın her zaman aşağıda durması için flex layout */}
       <body className={`${inter.className} min-h-screen flex flex-col`}>
-        <Header />
+        <LanguageProvider>
+          <Header />
 
-        {/* Sayfa içeriği */}
-        <div className="page-wrapper flex-grow">
-          {children}
-        </div>
+          {/* Sayfa içeriği */}
+          <div className="page-wrapper flex-grow">
+            {children}
+          </div>
 
-        {/* Her sayfada en altta görünen footer */}
-        <Footer />
+          {/* Her sayfada en altta görünen footer */}
+          <Footer />
+        </LanguageProvider>
       </body>
     </html>
   );

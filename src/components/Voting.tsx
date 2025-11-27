@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Player } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface VotingProps {
   question: string;
@@ -24,6 +25,7 @@ export default function Voting({
   votedPlayers,
   votingStartedAt,
 }: VotingProps) {
+  const { t } = useLanguage();
   const [timeLeft, setTimeLeft] = useState(10);
 
   useEffect(() => {
@@ -59,7 +61,7 @@ export default function Voting({
 
       <div className="text-center space-y-4 max-w-2xl">
         <span className="text-xs font-bold tracking-[0.2em] uppercase text-gray-dark">
-          Question
+          {t("questionLabel")}
         </span>
         <h1 className="text-3xl md:text-5xl font-bold uppercase tracking-tighter leading-tight">
           {question}
@@ -89,7 +91,7 @@ export default function Voting({
         {hasVoted && !isHost && (
           <div className="p-4 border border-black bg-black text-white">
             <p className="text-xs uppercase tracking-widest animate-pulse">
-              Vote cast. Waiting for results...
+              {t("voteCast")}
             </p>
           </div>
         )}
@@ -102,8 +104,8 @@ export default function Voting({
             disabled={!canShowResults}
           >
             {!canShowResults
-              ? `Waiting for votes (${timeLeft}s)...`
-              : "End Voting & Show Results"
+              ? t("waitingForVotes", { seconds: timeLeft })
+              : t("endVoting")
             }
           </Button>
         )}

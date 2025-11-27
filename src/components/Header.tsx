@@ -1,6 +1,10 @@
+"use client";
+
 import Link from "next/link";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function Header() {
+    const { t } = useLanguage();
     return (
         <header className="w-full border-b border-black bg-white sticky top-0 z-50">
             <div className="max-w-[440px] mx-auto px-6 h-16 flex items-center justify-between">
@@ -9,7 +13,7 @@ export default function Header() {
                 </Link>
                 <nav>
                     <Link href="/" className="text-xs font-medium uppercase tracking-widest hover:underline">
-                        Home
+                        {t("home")}
                     </Link>
                 </nav>
             </div>

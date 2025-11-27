@@ -8,8 +8,11 @@ import { doc, setDoc } from "firebase/firestore";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card } from "@/components/ui/Card";
+import { useLanguage } from "@/context/LanguageContext";
+import LanguageSelector from "@/components/LanguageSelector";
 
 export default function Home() {
+  const { t, language } = useLanguage();
   const [name, setName] = useState("");
   const [roomId, setRoomId] = useState("");
   const [questionCount, setQuestionCount] = useState(10);
@@ -17,18 +20,18 @@ export default function Home() {
   const router = useRouter();
   const [category, setCategory] = useState("general");
 
-const categories = [
-  { key: "love", label: "Love" },
-  { key: "general", label: "General" },
-  { key: "friendship", label: "Friendship" },
-  { key: "funny", label: "Funny" },
-  { key: "career", label: "Career" },
-];
+  const categories = [
+    { key: "love", label: t("cat_love") },
+    { key: "general", label: t("cat_general") },
+    { key: "friendship", label: t("cat_friendship") },
+    { key: "funny", label: t("cat_funny") },
+    { key: "career", label: t("cat_career") },
+  ];
 
 
-const createRoom = async () => {
-    if (!name) return alert("Lütfen ismini gir!");
-    if (questionCount < 1 || questionCount > 50) return alert("Soru sayısı 1 ile 50 arasında olmalı!");
+  const createRoom = async () => {
+    if (!name) return alert(t("enterName"));
+    if (questionCount < 1 || questionCount > 50) return alert(t("questionCountError"));
 
     setIsLoading(true);
 
@@ -36,9 +39,10 @@ const createRoom = async () => {
       const res = await fetch("/api/generate-question", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           count: questionCount,
-          category: category  // <-- kategoriler gelior
+          category: category,
+          language: language // Pass selected language
         }),
       });
 
@@ -49,15 +53,13 @@ const createRoom = async () => {
         questions = data.questions || [];
       } else {
         console.error("Failed to generate questions");
-        // Fallback or alert? For now, let's alert but maybe continue with empty?
-        // Better to stop if we promised questions.
-        alert("Soru oluşturulurken bir hata oluştu. Lütfen tekrar dene.");
+        alert(t("genError"));
         setIsLoading(false);
         return;
       }
 
       if (questions.length === 0) {
-        alert("Hiç soru oluşturulamadı. Lütfen tekrar dene.");
+        alert(t("noQuestions"));
         setIsLoading(false);
         return;
       }
@@ -70,23 +72,24 @@ const createRoom = async () => {
       await setDoc(doc(db, "rooms", newRoomId), {
         status: "lobby",
         currentQuestion: "",
-        questions: questions, // Store all generated questions
+        questions: questions,
         players: [{ id: userId, name, score: 0 }],
         votes: {},
         hostId: userId,
-        round: 0
+        round: 0,
+        language: language // Store room language
       });
 
       router.push(`/room/${newRoomId}`);
     } catch (error) {
       console.error("Error creating room:", error);
-      alert("Oda oluşturulurken bir hata oluştu.");
+      alert(t("createRoomError"));
       setIsLoading(false);
     }
   };
 
   const joinRoom = () => {
-    if (!name || !roomId) return alert("İsim ve Oda Kodu gerekli!");
+    if (!name || !roomId) return alert(t("joinError"));
     const userId = uuidv4();
     localStorage.setItem("game_user", JSON.stringify({ id: userId, name }));
     router.push(`/room/${roomId.toUpperCase()}`);
@@ -98,7 +101,7 @@ const createRoom = async () => {
         <div className="flex flex-col items-center space-y-4">
           <div className="spinner"></div>
           <p className="text-sm uppercase tracking-widest text-gray-dark animate-pulse">
-            Generating {questionCount} Questions...
+            {t("generating", { count: questionCount })}
           </p>
         </div>
       </main>
@@ -106,105 +109,111 @@ const createRoom = async () => {
   }
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center px-4 py-8 md:px-6 bg-white fade-in">
-  <div className="w-full max-w-sm space-y-10">
+    <main className="min-h-screen flex flex-col items-center justify-center px-4 py-8 md:px-6 bg-white fade-in relative">
 
-    {/* TITLE */}
-    <div className="text-center space-y-2">
-      <h1 className="text-3xl md:text-4xl font-bold uppercase tracking-tighter">
-        Spot The One
-      </h1>
-      <p className="text-[10px] md:text-xs uppercase tracking-widest text-gray-dark">
-        Who is most likely?
-      </p>
-    </div>
-
-    {/* MAIN CARD */}
-    <Card className="space-y-8 border-none shadow-none p-0">
-
-      {/* NAME + QUESTION */}
-      <div className="space-y-6 flex flex-col items-center">
-
-        <Input
-          placeholder="YOUR NAME"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="text-center uppercase tracking-widest w-full"
-        />
-
-        {/* QUESTIONS LINE */}
-        <div className="w-full flex flex-col xs:flex-row items-center justify-center gap-3">
-          <label className="text-[10px] md:text-xs uppercase tracking-widest text-gray-dark whitespace-nowrap">
-            Questions:
-          </label>
-
-          <Input
-            type="number"
-            min={1}
-            max={50}
-            value={questionCount}
-            onChange={(e) => setQuestionCount(Number(e.target.value))}
-            className="text-center uppercase tracking-widest w-24"
-          />
-        </div>
-        {/* CATEGORY SELECT */}
-<div className="flex flex-wrap justify-center gap-2">
-  {categories.map((cat) => (
-    <Button
-      key={cat.key}
-      variant={category === cat.key ? "primary" : "secondary"}
-      className="px-4 py-2 text-xs"
-      onClick={() => setCategory(cat.key)}
-    >
-      {cat.label}
-    </Button>
-  ))}
-</div>
-
-
-        {/* CREATE BUTTON */}
-        <Button
-          onClick={createRoom}
-          variant="primary"
-          className="w-full sm:w-auto px-10 py-4"
-        >
-          Create New Room
-        </Button>
+      {/* Language Selector Top Right or Centered */}
+      <div className="absolute top-4 right-4 md:top-8 md:right-8">
+        <LanguageSelector />
       </div>
 
-      {/* OR DIVIDER */}
-      <div className="relative flex items-center justify-center">
-        <div className="absolute w-full border-t border-gray-mid"></div>
-        <span className="relative bg-white px-4 text-[10px] md:text-xs text-gray-dark uppercase tracking-widest">
-          or
-        </span>
-      </div>
+      <div className="w-full max-w-sm space-y-10">
 
-      {/* JOIN ROOM */}
-      <div className="space-y-3">
-
-        <div className="flex flex-col sm:flex-row gap-3 w-full">
-          <Input
-            placeholder="ROOM CODE"
-            value={roomId}
-            onChange={(e) => setRoomId(e.target.value)}
-            className="text-center uppercase tracking-widest w-full"
-          />
-
-          <Button
-            onClick={joinRoom}
-            variant="secondary"
-            className="w-full sm:w-auto px-8 py-4"
-          >
-            Join
-          </Button>
+        {/* TITLE */}
+        <div className="text-center space-y-2">
+          <h1 className="text-3xl md:text-4xl font-bold uppercase tracking-tighter">
+            Spot The One
+          </h1>
+          <p className="text-[10px] md:text-xs uppercase tracking-widest text-gray-dark">
+            {t("subtitle")}
+          </p>
         </div>
 
+        {/* MAIN CARD */}
+        <Card className="space-y-8 border-none shadow-none p-0">
+
+          {/* NAME + QUESTION */}
+          <div className="space-y-6 flex flex-col items-center">
+
+            <Input
+              placeholder={t("yourName")}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="text-center uppercase tracking-widest w-full"
+            />
+
+            {/* QUESTIONS LINE */}
+            <div className="w-full flex flex-col xs:flex-row items-center justify-center gap-3">
+              <label className="text-[10px] md:text-xs uppercase tracking-widest text-gray-dark whitespace-nowrap">
+                {t("questionsLabel")}
+              </label>
+
+              <Input
+                type="number"
+                min={1}
+                max={50}
+                value={questionCount}
+                onChange={(e) => setQuestionCount(Number(e.target.value))}
+                className="text-center uppercase tracking-widest w-24"
+              />
+            </div>
+            {/* CATEGORY SELECT */}
+            <div className="flex flex-wrap justify-center gap-2">
+              {categories.map((cat) => (
+                <Button
+                  key={cat.key}
+                  variant={category === cat.key ? "primary" : "secondary"}
+                  className="px-4 py-2 text-xs"
+                  onClick={() => setCategory(cat.key)}
+                >
+                  {cat.label}
+                </Button>
+              ))}
+            </div>
+
+
+            {/* CREATE BUTTON */}
+            <Button
+              onClick={createRoom}
+              variant="primary"
+              className="w-full sm:w-auto px-10 py-4"
+            >
+              {t("createRoom")}
+            </Button>
+          </div>
+
+          {/* OR DIVIDER */}
+          <div className="relative flex items-center justify-center">
+            <div className="absolute w-full border-t border-gray-mid"></div>
+            <span className="relative bg-white px-4 text-[10px] md:text-xs text-gray-dark uppercase tracking-widest">
+              {t("or")}
+            </span>
+          </div>
+
+          {/* JOIN ROOM */}
+          <div className="space-y-3">
+
+            <div className="flex flex-col sm:flex-row gap-3 w-full">
+              <Input
+                placeholder={t("roomCode")}
+                value={roomId}
+                onChange={(e) => setRoomId(e.target.value)}
+                className="text-center uppercase tracking-widest w-full"
+              />
+
+              <Button
+                onClick={joinRoom}
+                variant="secondary"
+                className="w-full sm:w-auto px-8 py-4"
+              >
+                {t("join")}
+              </Button>
+            </div>
+
+          </div>
+
+        </Card>
       </div>
-      
-    </Card>
-  </div>
-</main>
+    </main>
 
   );
 }

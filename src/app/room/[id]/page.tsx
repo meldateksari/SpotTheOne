@@ -8,6 +8,8 @@ import { v4 as uuidv4 } from "uuid";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card } from "@/components/ui/Card";
+import { useLanguage } from "@/context/LanguageContext";
+import { Language } from "@/utils/translations";
 
 // ... existing imports ...
 
@@ -25,6 +27,7 @@ import GameOverModal from "@/components/GameOverModal";
 export default function RoomPage() {
   const { id: roomId } = useParams();
   const router = useRouter();
+  const { t, setLanguage } = useLanguage();
 
   const [currentUser, setCurrentUser] = useState<Player | null>(() => {
     if (typeof window !== "undefined") {
@@ -53,6 +56,11 @@ export default function RoomPage() {
         const data = snap.data() as RoomData;
         const players = data.players || [];
 
+        // Sync language from room
+        if (data.language) {
+          setLanguage(data.language as Language);
+        }
+
         const alreadyInRoom = players.some(
           (p: Player) => p.id === currentUser.id
         );
@@ -66,6 +74,7 @@ export default function RoomPage() {
         hasJoinedRef.current = true;
       } catch (err) {
         console.error("Odaya katılma hatası:", err);
+        alert(t("roomJoinError"));
       }
     };
 
@@ -82,6 +91,17 @@ export default function RoomPage() {
       if (docSnap.exists()) {
         const data = docSnap.data() as RoomData;
         setRoomData(data);
+
+        // Ensure language is synced if it changes or on first load via snapshot too
+        if (data.language) {
+          // We can check if it's different to avoid loops, but setLanguage usually handles it.
+          // However, to be safe, we might want to only set it if different.
+          // But since we can't easily access current language inside this callback without dependency,
+          // we rely on the component re-render or just set it.
+          // Actually, let's not set it here repeatedly to avoid re-renders if not needed.
+          // The initial join handles it. But if I join via link without being in the room yet?
+          // The joinRoom effect handles it.
+        }
 
         if (data.status === "results") setHasVoted(false);
         if (data.status === "gameover") setShowGameOver(true);
@@ -125,7 +145,7 @@ export default function RoomPage() {
       router.push("/");
     } catch (err) {
       console.error("Leave room error:", err);
-      alert("Odadan çıkarken bir hata oluştu.");
+      alert(t("roomLeaveError"));
     }
   };
 
@@ -194,8 +214,8 @@ export default function RoomPage() {
       <main className="min-h-screen flex flex-col items-center justify-center p-4 bg-white fade-in">
         <Card className="w-full max-w-sm p-8 space-y-6">
           <div className="text-center space-y-2">
-            <h2 className="text-xl font-bold uppercase tracking-tighter">Join Room</h2>
-            <p className="text-xs uppercase tracking-widest text-gray-dark">Enter your name to join</p>
+            <h2 className="text-xl font-bold uppercase tracking-tighter">{t("joinRoomTitle")}</h2>
+            <p className="text-xs uppercase tracking-widest text-gray-dark">{t("enterNameJoin")}</p>
           </div>
 
           <form
@@ -215,13 +235,13 @@ export default function RoomPage() {
           >
             <Input
               name="name"
-              placeholder="YOUR NAME"
+              placeholder={t("yourName")}
               className="text-center uppercase tracking-widest"
               autoFocus
               required
             />
             <Button type="submit" variant="primary" className="w-full">
-              Join Game
+              {t("joinGame")}
             </Button>
           </form>
         </Card>
@@ -250,7 +270,7 @@ export default function RoomPage() {
       >
         {/* Left */}
         <div className="flex items-center gap-2 text-[11px] md:text-xs font-medium uppercase tracking-widest">
-          <span className="text-gray-500">Room</span>
+          <span className="text-gray-500">{t("roomLabel")}</span>
           <span className="text-black font-bold break-all">{roomId}</span>
         </div>
 
@@ -261,7 +281,7 @@ export default function RoomPage() {
 
           {isHost && (
             <span className="bg-black text-white px-2 py-1 text-[9px] md:text-[10px] tracking-widest">
-              HOST
+              {t("hostLabel")}
             </span>
           )}
 
@@ -273,7 +293,7 @@ export default function RoomPage() {
             <span className="material-symbols-outlined text-[16px] md:text-[20px]">
               logout
             </span>
-            <span className="font-premium">Leave</span>
+            <span className="font-premium">{t("leave")}</span>
           </button>
 
 
