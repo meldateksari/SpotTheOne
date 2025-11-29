@@ -106,7 +106,7 @@ export default function Home() {
       });
 
       // → Odaya git
-      router.push(`/room/${newRoomId}`);
+      router.push(`/site/room/${newRoomId}`);
     } catch (error) {
       console.error("Error creating room:", error);
       alert(t("createRoomError"));
@@ -126,7 +126,7 @@ export default function Home() {
       JSON.stringify({ id: userId, name, avatar })
     );
 
-    router.push(`/room/${roomId.toUpperCase()}`);
+    router.push(`/site/room/${roomId.toUpperCase()}`);
   };
 
   // -------------------------------------------------------
@@ -138,8 +138,8 @@ export default function Home() {
     // veya sadece ABCDEF
     let code = decodedText;
     try {
-      if (decodedText.includes("/room/")) {
-        const parts = decodedText.split("/room/");
+      if (decodedText.includes("/site/room/")) {
+        const parts = decodedText.split("/site/room/");
         if (parts.length > 1) {
           code = parts[1];
         }
