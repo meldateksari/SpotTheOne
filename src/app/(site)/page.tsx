@@ -106,7 +106,7 @@ export default function Home() {
       });
 
       // → Odaya git
-      router.push(`/site/room/${newRoomId}`);
+      router.push(`/room/${newRoomId}`);
     } catch (error) {
       console.error("Error creating room:", error);
       alert(t("createRoomError"));
@@ -126,7 +126,7 @@ export default function Home() {
       JSON.stringify({ id: userId, name, avatar })
     );
 
-    router.push(`/site/room/${roomId.toUpperCase()}`);
+    router.push(`/room/${roomId.toUpperCase()}`);
   };
 
   // -------------------------------------------------------
@@ -138,8 +138,8 @@ export default function Home() {
     // veya sadece ABCDEF
     let code = decodedText;
     try {
-      if (decodedText.includes("/site/room/")) {
-        const parts = decodedText.split("/site/room/");
+      if (decodedText.includes("/room/")) {
+        const parts = decodedText.split("/room/");
         if (parts.length > 1) {
           code = parts[1];
         }
@@ -151,8 +151,17 @@ export default function Home() {
     // Temizle (query params vs varsa)
     code = code.split("?")[0].split("#")[0].toUpperCase();
 
-    setRoomId(code);
+    // Eğer isim girilmişse kaydet, girilmemişse odada sorulacak
+    if (name) {
+      const userId = uuidv4();
+      localStorage.setItem(
+        "game_user",
+        JSON.stringify({ id: userId, name, avatar })
+      );
+    }
+
     setShowScanner(false);
+    router.push(`/room/${code}`);
   };
 
   // -------------------------------------------------------

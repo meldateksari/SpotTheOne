@@ -296,19 +296,22 @@ export default function VoiceChat({ roomId, currentUser, players, voiceParticipa
     // ===========================================================
 
     return (
-        <div className="fixed bottom-24 left-4 z-40 flex flex-col items-start gap-2">
+        <div className="fixed z-40 flex gap-2 top-28 right-4 flex-col items-end sm:top-auto sm:right-auto sm:bottom-4 sm:left-4 sm:flex-col-reverse sm:items-start">
 
             {/* Main Control Button (Toggle Panel) */}
             <button
                 onClick={() => setIsExpanded(!isExpanded)}
-                className={`flex items-center gap-2 px-4 py-3 rounded-full shadow-lg transition-all ${isExpanded ? "bg-white text-black border-2 border-black" : "bg-black text-white"
+                className={`flex items-center justify-center gap-2 p-3 sm:px-4 sm:py-3 rounded-full shadow-lg transition-all ${isExpanded ? "bg-white text-black border-2 border-black" : "bg-black text-white"
                     }`}
             >
                 <span className="material-symbols-outlined">
                     {isExpanded ? "expand_more" : "graphic_eq"}
                 </span>
-                <span className="uppercase tracking-widest text-xs font-bold">
-                    {t("voiceRoom")} ({voiceParticipants.length})
+                <span className="uppercase tracking-widest text-xs font-bold hidden sm:inline">
+                    {t("voiceRoom")}
+                </span>
+                <span className="text-xs font-bold">
+                    ({voiceParticipants.length})
                 </span>
             </button>
 

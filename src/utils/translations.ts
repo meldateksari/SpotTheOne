@@ -67,7 +67,17 @@ export const translations: Record<Language, Record<string, string>> = {
         finalResults: "GENEL SONUÇLAR",
         leaderboard: "SIRALAMA",
         playerLeft: "{name} odadan ayrıldı.",
-        emptyRoom: "Boş Oda"
+        emptyRoom: "Boş Oda",
+        howToPlay: "Nasıl Oynanır?",
+        howToPlayDesc: "Oyun kuralları ve puanlama sistemi",
+        gameRules: "Oyun Kuralları",
+        scoring: "Puanlama",
+        step1: "Oda Oluştur veya Katıl",
+        step1Desc: "Bir oda oluştur ve arkadaşlarını davet et veya var olan bir odaya kod ile katıl.",
+        step2: "Soruları Cevapla",
+        step2Desc: "Ekrana gelen 'En çok kim ... yapar?' sorularına anonim olarak cevap ver.",
+        step3: "Sonuçları Gör",
+        step3Desc: "Herkes oy verdikten sonra sonuçlar açıklanır. En çok oy alan kişi puan kazanır!"
     },
     en: {
         enterName: "Please enter your name!",
@@ -135,7 +145,17 @@ export const translations: Record<Language, Record<string, string>> = {
         finalResults: "FINAL RESULTS",
         leaderboard: "LEADERBOARD",
         playerLeft: "{name} left the room.",
-        emptyRoom: "Empty Room"
+        emptyRoom: "Empty Room",
+        howToPlay: "How to Play?",
+        howToPlayDesc: "Game rules and scoring system",
+        gameRules: "Game Rules",
+        scoring: "Scoring",
+        step1: "Create or Join Room",
+        step1Desc: "Create a room and invite friends or join an existing room with a code.",
+        step2: "Answer Questions",
+        step2Desc: "Anonymously answer 'Who is most likely to...?' questions.",
+        step3: "See Results",
+        step3Desc: "After everyone votes, results are revealed. The person with the most votes gets points!"
     },
     de: {
         enterName: "Bitte gib deinen Namen ein!",
@@ -203,7 +223,17 @@ export const translations: Record<Language, Record<string, string>> = {
         finalResults: "ENDERGEBNISSE",
         leaderboard: "RANGLISTE",
         playerLeft: "{name} hat den Raum verlassen.",
-        emptyRoom: "Leerer Raum"
+        emptyRoom: "Leerer Raum",
+        howToPlay: "Spielanleitung",
+        howToPlayDesc: "Spielregeln und Punktesystem",
+        gameRules: "Spielregeln",
+        scoring: "Punktwertung",
+        step1: "Raum erstellen oder beitreten",
+        step1Desc: "Erstelle einen Raum und lade Freunde ein oder trete einem bestehenden Raum mit einem Code bei.",
+        step2: "Fragen beantworten",
+        step2Desc: "Beantworte anonym 'Wer würde am ehesten...?' Fragen.",
+        step3: "Ergebnisse sehen",
+        step3Desc: "Nachdem alle abgestimmt haben, werden die Ergebnisse enthüllt. Die Person mit den meisten Stimmen erhält Punkte!"
     },
     es: {
         enterName: "¡Por favor, introduce tu nombre!",
@@ -271,7 +301,17 @@ export const translations: Record<Language, Record<string, string>> = {
         finalResults: "RESULTADOS FINALES",
         leaderboard: "TABLA DE CLASIFICACIÓN",
         playerLeft: "{name} salió de la sala.",
-        emptyRoom: "Sala Vacía"
+        emptyRoom: "Sala Vacía",
+        howToPlay: "Cómo Jugar",
+        howToPlayDesc: "Reglas del juego y sistema de puntuación",
+        gameRules: "Reglas del Juego",
+        scoring: "Puntuación",
+        step1: "Crear o Unirse a Sala",
+        step1Desc: "Crea una sala e invita a amigos o únete a una sala existente con un código.",
+        step2: "Responder Preguntas",
+        step2Desc: "Responde anónimamente a preguntas de '¿Quién es más probable que...?'",
+        step3: "Ver Resultados",
+        step3Desc: "Después de que todos voten, se revelan los resultados. ¡La persona con más votos obtiene puntos!"
     },
     ru: {
         enterName: "Пожалуйста, введите ваше имя!",
@@ -339,6 +379,16 @@ export const translations: Record<Language, Record<string, string>> = {
         finalResults: "ИТОГОВЫЕ РЕЗУЛЬТАТЫ",
         leaderboard: "ТАБЛИЦА ЛИДЕРОВ",
         playerLeft: "{name} покинул комнату.",
-        emptyRoom: "Пустая Комната"
+        emptyRoom: "Пустая Комната",
+        howToPlay: "Как играть?",
+        howToPlayDesc: "Правила игры и система подсчета очков",
+        gameRules: "Правила Игры",
+        scoring: "Подсчет очков",
+        step1: "Создать или присоединиться",
+        step1Desc: "Создайте комнату и пригласите друзей или присоединитесь к существующей комнате по коду.",
+        step2: "Отвечать на вопросы",
+        step2Desc: "Анонимно отвечайте на вопросы 'Кто скорее всего...?'",
+        step3: "Смотреть результаты",
+        step3Desc: "После того как все проголосуют, результаты будут открыты. Человек с наибольшим количеством голосов получает очки!"
     }
 };

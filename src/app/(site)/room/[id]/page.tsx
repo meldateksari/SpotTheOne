@@ -96,7 +96,7 @@ export default function RoomPage() {
       if (!docSnap.exists()) {
         // Room deleted (e.g. by host or timeout)
         localStorage.removeItem("game_user");
-        router.push("/site");
+        router.push("/");
         return;
       }
 
@@ -144,7 +144,7 @@ export default function RoomPage() {
     }
 
     localStorage.removeItem("game_user");
-    router.push("/site");
+    router.push("/");
   };
 
   // ===========================================================

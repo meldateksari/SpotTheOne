@@ -16,7 +16,7 @@ export default function Lobby({ roomId, players, isHost, onStartGame, hostId }: 
   const { t } = useLanguage();
   const shareUrl =
     typeof window !== "undefined"
-      ? `${window.location.origin}/site/room/${roomId}`
+      ? `${window.location.origin}/room/${roomId}`
       : "";
 
   return (
