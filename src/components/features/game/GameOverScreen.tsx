@@ -87,7 +87,7 @@ export default function GameOverScreen({ roomId, players, isHost }: GameOverScre
 
     const handleHome = () => {
         localStorage.removeItem("game_user");
-        router.push("/");
+        router.push("/site");
     };
 
     return (

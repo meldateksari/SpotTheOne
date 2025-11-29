@@ -16,13 +16,13 @@ import { Language } from "@/utils/translations";
 
 import { RoomData, Player } from "@/types";
 
-import AvatarSelector from "@/components/AvatarSelector";
-import Lobby from "@/components/Lobby";
-import Voting from "@/components/Voting";
-import Results from "@/components/Results";
-import GameOverScreen from "@/components/GameOverScreen";
-import Chat from "@/components/Chat";
-import VoiceChat from "@/components/VoiceChat";
+import AvatarSelector from "@/components/common/AvatarSelector";
+import Lobby from "@/components/features/game/Lobby";
+import Voting from "@/components/features/game/Voting";
+import Results from "@/components/features/game/Results";
+import GameOverScreen from "@/components/features/game/GameOverScreen";
+import Chat from "@/components/features/chat/Chat";
+import VoiceChat from "@/components/features/chat/VoiceChat";
 
 export default function RoomPage() {
   const { id: roomId } = useParams();
@@ -96,7 +96,7 @@ export default function RoomPage() {
       if (!docSnap.exists()) {
         // Room deleted (e.g. by host or timeout)
         localStorage.removeItem("game_user");
-        router.push("/");
+        router.push("/site");
         return;
       }
 
@@ -144,7 +144,7 @@ export default function RoomPage() {
     }
 
     localStorage.removeItem("game_user");
-    router.push("/");
+    router.push("/site");
   };
 
   // ===========================================================
