@@ -14,6 +14,7 @@ interface VotingProps {
   votedPlayers: string[];
   votingStartedAt: number;
   round: number;
+  duration: number;
 }
 
 export default function Voting({
@@ -26,9 +27,10 @@ export default function Voting({
   votedPlayers,
   votingStartedAt,
   round,
+  duration,
 }: VotingProps) {
   const { t } = useLanguage();
-  const [timeLeft, setTimeLeft] = useState(10);
+  const [timeLeft, setTimeLeft] = useState(duration);
 
   useEffect(() => {
     if (!votingStartedAt) return;
@@ -36,7 +38,7 @@ export default function Voting({
     const interval = setInterval(() => {
       const now = Date.now();
       const elapsed = Math.floor((now - votingStartedAt) / 1000);
-      const remaining = Math.max(0, 10 - elapsed);
+      const remaining = Math.max(0, duration - elapsed);
 
       setTimeLeft(remaining);
 
@@ -46,7 +48,7 @@ export default function Voting({
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [votingStartedAt]);
+  }, [votingStartedAt, duration]);
 
   const allVoted = votedPlayers.length === players.length;
   const canShowResults = allVoted || timeLeft === 0;
@@ -57,7 +59,7 @@ export default function Voting({
       <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden mb-4">
         <div
           className="h-full bg-black transition-all duration-1000 ease-linear"
-          style={{ width: `${(timeLeft / 10) * 100}%` }}
+          style={{ width: `${(timeLeft / duration) * 100}%` }}
         />
       </div>
 

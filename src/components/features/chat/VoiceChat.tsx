@@ -9,14 +9,16 @@ interface VoiceChatProps {
     roomId: string;
     currentUser: Player;
     players: Player[];
+    hostId?: string;
     voiceParticipants?: string[];
 }
 
-export default function VoiceChat({ roomId, currentUser, players, voiceParticipants = [] }: VoiceChatProps) {
+export default function VoiceChat({ roomId, currentUser, players, voiceParticipants = [], hostId }: VoiceChatProps) {
     const { t } = useLanguage();
 
     // State
     const [isInVoice, setIsInVoice] = useState(false);
+
     const [isConnecting, setIsConnecting] = useState(false); // New state for connection feedback
     const [peer, setPeer] = useState<Peer | null>(null);
     const [myPeerId, setMyPeerId] = useState<string | null>(null);
@@ -381,7 +383,8 @@ export default function VoiceChat({ roomId, currentUser, players, voiceParticipa
 
                             // Audio Level (0-255)
                             const level = audioLevels[pid] || 0;
-                            const isSpeaking = level > 5; // Lowered threshold slightly
+                            // Fix: Don't show speaking indicator if deafened or muted
+                            const isSpeaking = level > 5 && (isMe ? !isMuted : (!isDeafened && !isPeerMuted));
 
                             return (
                                 <div key={pid} className="flex items-center justify-between text-sm">
@@ -397,8 +400,13 @@ export default function VoiceChat({ roomId, currentUser, players, voiceParticipa
                                                 </div>
                                             )}
                                         </div>
-                                        <span className="truncate font-medium">
+                                        <span className="truncate font-medium flex items-center gap-1">
                                             {isMe ? `${t("you")}` : p.name}
+                                            {p.id === hostId && (
+                                                <span className="material-symbols-outlined text-[14px] text-yellow-600" title={t("hostLabel")}>
+                                                    crown
+                                                </span>
+                                            )}
                                         </span>
                                     </div>
 

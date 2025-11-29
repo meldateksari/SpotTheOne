@@ -77,7 +77,9 @@ export const translations: Record<Language, Record<string, string>> = {
         step2: "Soruları Cevapla",
         step2Desc: "Ekrana gelen 'En çok kim ... yapar?' sorularına anonim olarak cevap ver.",
         step3: "Sonuçları Gör",
-        step3Desc: "Herkes oy verdikten sonra sonuçlar açıklanır. En çok oy alan kişi puan kazanır!"
+        step3Desc: "Herkes oy verdikten sonra sonuçlar açıklanır. En çok oy alan kişi puan kazanır!",
+        durationSelection: "Süre Seçimi",
+        secondsShort: "sn"
     },
     en: {
         enterName: "Please enter your name!",
@@ -155,7 +157,9 @@ export const translations: Record<Language, Record<string, string>> = {
         step2: "Answer Questions",
         step2Desc: "Anonymously answer 'Who is most likely to...?' questions.",
         step3: "See Results",
-        step3Desc: "After everyone votes, results are revealed. The person with the most votes gets points!"
+        step3Desc: "After everyone votes, results are revealed. The person with the most votes gets points!",
+        durationSelection: "Duration Selection",
+        secondsShort: "s"
     },
     de: {
         enterName: "Bitte gib deinen Namen ein!",
@@ -233,7 +237,9 @@ export const translations: Record<Language, Record<string, string>> = {
         step2: "Fragen beantworten",
         step2Desc: "Beantworte anonym 'Wer würde am ehesten...?' Fragen.",
         step3: "Ergebnisse sehen",
-        step3Desc: "Nachdem alle abgestimmt haben, werden die Ergebnisse enthüllt. Die Person mit den meisten Stimmen erhält Punkte!"
+        step3Desc: "Nachdem alle abgestimmt haben, werden die Ergebnisse enthüllt. Die Person mit den meisten Stimmen erhält Punkte!",
+        durationSelection: "Dauerauswahl",
+        secondsShort: "s"
     },
     es: {
         enterName: "¡Por favor, introduce tu nombre!",
@@ -311,7 +317,9 @@ export const translations: Record<Language, Record<string, string>> = {
         step2: "Responder Preguntas",
         step2Desc: "Responde anónimamente a preguntas de '¿Quién es más probable que...?'",
         step3: "Ver Resultados",
-        step3Desc: "Después de que todos voten, se revelan los resultados. ¡La persona con más votos obtiene puntos!"
+        step3Desc: "Después de que todos voten, se revelan los resultados. ¡La persona con más votos obtiene puntos!",
+        durationSelection: "Selección de Duración",
+        secondsShort: "s"
     },
     ru: {
         enterName: "Пожалуйста, введите ваше имя!",
@@ -389,6 +397,8 @@ export const translations: Record<Language, Record<string, string>> = {
         step2: "Отвечать на вопросы",
         step2Desc: "Анонимно отвечайте на вопросы 'Кто скорее всего...?'",
         step3: "Смотреть результаты",
-        step3Desc: "После того как все проголосуют, результаты будут открыты. Человек с наибольшим количеством голосов получает очки!"
+        step3Desc: "После того как все проголосуют, результаты будут открыты. Человек с наибольшим количеством голосов получает очки!",
+        durationSelection: "Выбор времени",
+        secondsShort: "с"
     }
 };

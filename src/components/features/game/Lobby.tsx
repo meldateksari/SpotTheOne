@@ -3,17 +3,19 @@ import { Player } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { useLanguage } from "@/context/LanguageContext";
+import { useState } from "react";
 
 interface LobbyProps {
   roomId: string;
   players: Player[];
   isHost: boolean;
-  onStartGame: () => void;
+  onStartGame: (duration: number) => void;
   hostId?: string;
 }
 
 export default function Lobby({ roomId, players, isHost, onStartGame, hostId }: LobbyProps) {
   const { t } = useLanguage();
+  const [duration, setDuration] = useState(30);
   const shareUrl =
     typeof window !== "undefined"
       ? `${window.location.origin}/room/${roomId}`
@@ -65,9 +67,35 @@ export default function Lobby({ roomId, players, isHost, onStartGame, hostId }: 
         </div>
       </div>
 
+      {isHost && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between border-b border-gray-mid pb-2">
+            <h3 className="text-sm uppercase tracking-widest">{t("durationSelection")}</h3>
+            <span className="text-sm font-bold">{duration}{t("secondsShort")}</span>
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            {[10, 30, 60].map((d) => (
+              <button
+                key={d}
+                onClick={() => setDuration(d)}
+                className={`
+                  p-3 text-sm font-bold uppercase tracking-widest border transition-all
+                  ${duration === d
+                    ? "bg-black text-white border-black"
+                    : "bg-white text-black border-gray-mid hover:border-black"
+                  }
+                `}
+              >
+                {d}{t("secondsShort")}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="pt-4 flex justify-center">
         {isHost ? (
-          <Button onClick={onStartGame} variant="primary" className="w-auto px-12">
+          <Button onClick={() => onStartGame(duration)} variant="primary" className="w-auto px-12">
             {t("startGame")}
           </Button>
         ) : (

@@ -13,7 +13,7 @@ interface ChatProps {
 }
 
 export default function Chat({ roomId, currentUser, players }: ChatProps) {
-    const { t } = useLanguage();
+    const { t, language } = useLanguage();
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState("");
@@ -119,7 +119,7 @@ export default function Chat({ roomId, currentUser, players }: ChatProps) {
                                 <div key={msg.id} className="flex items-center justify-center my-2 opacity-60">
                                     <div className="h-[1px] bg-gray-400 w-8"></div>
                                     <span className="mx-2 text-[10px] uppercase tracking-widest text-gray-500 font-medium">
-                                        {msg.text}
+                                        {msg.translationKey ? t(msg.translationKey, msg.translationParams) : msg.text}
                                     </span>
                                     <div className="h-[1px] bg-gray-400 w-8"></div>
                                 </div>
@@ -153,7 +153,7 @@ export default function Chat({ roomId, currentUser, players }: ChatProps) {
                                         )}
                                         <p className="break-words">{msg.text}</p>
                                         <p className={`text-[9px] text-right mt-1 ${isMe ? "text-gray-300" : "text-gray-500"}`}>
-                                            {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            {new Intl.DateTimeFormat(language, { hour: '2-digit', minute: '2-digit' }).format(new Date(msg.createdAt))}
                                         </p>
                                     </div>
                                 </div>

@@ -47,13 +47,29 @@ export default function RoomPage() {
   const [showGameOver, setShowGameOver] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
   const [showToast, setShowToast] = useState(false);
-  const hasJoinedRef = useRef(false);
+
+  // Refs for state access in effects/callbacks
+  const joinedRoomIdRef = useRef<string | null>(null);
+  const roomDataRef = useRef<RoomData | null>(null);
+  const currentUserRef = useRef<Player | null>(null);
+  const isLeavingRef = useRef(false);
+
+  useEffect(() => {
+    roomDataRef.current = roomData;
+  }, [roomData]);
+
+  useEffect(() => {
+    currentUserRef.current = currentUser;
+  }, [currentUser]);
 
   // ===========================================================
   // JOIN ROOM
   // ===========================================================
   useEffect(() => {
-    if (!currentUser || !roomId || hasJoinedRef.current) return;
+    if (!currentUser || !roomId) return;
+
+    // Prevent double joining or joining if already joined this specific room
+    if (joinedRoomIdRef.current === roomId) return;
 
     const joinRoom = async () => {
       try {
@@ -73,7 +89,8 @@ export default function RoomPage() {
           });
         }
 
-        hasJoinedRef.current = true;
+        joinedRoomIdRef.current = roomId as string;
+        isLeavingRef.current = false; // Reset leave flag for new room
 
       } catch (err) {
         console.error("Join error:", err);
@@ -109,26 +126,44 @@ export default function RoomPage() {
   }, [roomId]);
 
   // ===========================================================
-  // LEAVE ROOM
+  // LEAVE ROOM LOGIC
   // ===========================================================
-  const leaveRoom = async () => {
-    if (!roomId || !currentUser || !roomData) return;
+  // Stable callback for leaving
+  const handleLeaveRoom = async () => {
+    // Prevent double execution
+    if (isLeavingRef.current) return;
+    isLeavingRef.current = true;
 
-    const roomRef = doc(db, "rooms", roomId as string);
+    const user = currentUserRef.current;
+    const data = roomDataRef.current;
+    // Use the roomId from the ref if possible, or the current roomId.
+    // Since this runs on unmount, roomId might be stale if we didn't capture it?
+    // But joinedRoomIdRef tracks the room we are actually IN.
+    const targetRoomId = joinedRoomIdRef.current || roomId;
+
+    if (!targetRoomId || !user || !data) return;
+
+    const roomRef = doc(db, "rooms", targetRoomId as string);
 
     // Add "Player Left" message to chat
     try {
-      await addDoc(collection(db, "rooms", roomId as string, "messages"), {
+      await addDoc(collection(db, "rooms", targetRoomId as string, "messages"), {
         senderId: "system",
         senderName: "System",
-        text: t("playerLeft", { name: currentUser.name }),
+        text: "Player Left", // Fallback text
+        translationKey: "playerLeft",
+        translationParams: { name: user.name },
         createdAt: Date.now()
       });
     } catch (err) {
       console.error("Error sending leave message:", err);
     }
 
-    const updatedPlayers = roomData.players.filter((p) => p.id !== currentUser.id);
+    // Re-fetch latest data to ensure atomic-ish update? 
+    // Or just use what we have. Local state might be slightly stale.
+    // Ideally we should use transaction or arrayRemove, but arrayRemove needs exact object.
+    // Filter is safer.
+    const updatedPlayers = data.players.filter((p) => p.id !== user.id);
 
     // If no players left, delete room
     if (updatedPlayers.length === 0) {
@@ -136,21 +171,44 @@ export default function RoomPage() {
     } else {
       const updatePayload: Partial<RoomData> = { players: updatedPlayers };
 
-      if (roomData.hostId === currentUser.id) {
+      if (data.hostId === user.id) {
         updatePayload.hostId = updatedPlayers[0]?.id || "";
       }
 
       await updateDoc(roomRef, updatePayload);
     }
+  };
 
+  const leaveRoom = async () => {
+    await handleLeaveRoom();
     localStorage.removeItem("game_user");
     router.push("/");
   };
 
+  // Handle browser close / tab close
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      handleLeaveRoom();
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [roomId]); // Re-bind if roomId changes
+
+  // Handle component unmount (navigation away)
+  useEffect(() => {
+    return () => {
+      handleLeaveRoom();
+    };
+  }, []);
+
   // ===========================================================
   // GAME ACTIONS
   // ===========================================================
-  const startGame = async () => {
+  const startGame = async (duration: number = 30) => {
     if (!roomId || !roomData) return;
 
     const currentRound = roomData.round || 0;
@@ -167,7 +225,8 @@ export default function RoomPage() {
       votes: {},
       votedPlayers: [],
       votingStartedAt: Date.now(),
-      round: currentRound + 1
+      round: currentRound + 1,
+      questionDuration: duration // Save duration
     });
   };
 
@@ -408,6 +467,7 @@ export default function RoomPage() {
           votedPlayers={roomData.votedPlayers || []}
           votingStartedAt={roomData.votingStartedAt || 0}
           round={roomData.round || 1}
+          duration={roomData.questionDuration || 30}
         />
       )}
 
@@ -417,7 +477,7 @@ export default function RoomPage() {
           players={roomData.players}
           votes={roomData.votes}
           isHost={isHost}
-          onNextRound={startGame}
+          onNextRound={() => startGame(roomData.questionDuration || 30)}
           currentRound={roomData.round || 0}
           totalQuestions={roomData.questions?.length || 0}
         />
@@ -440,6 +500,7 @@ export default function RoomPage() {
         currentUser={currentUser}
         players={roomData.players}
         voiceParticipants={roomData.voiceParticipants || []}
+        hostId={roomData.hostId}
       />
 
       {/* TOAST NOTIFICATION */}

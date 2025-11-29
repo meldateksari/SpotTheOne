@@ -20,6 +20,7 @@ export interface RoomData {
   language?: string;
   voiceParticipants?: string[];
   playerVotes?: { [key: string]: string };
+  questionDuration?: number;
 }
 
 export interface Message {
@@ -28,4 +29,6 @@ export interface Message {
   senderName: string;
   text: string;
   createdAt: number;
+  translationKey?: string;
+  translationParams?: Record<string, string | number>;
 }

@@ -27,7 +27,6 @@ export default function QRScannerModal({ onScan, onClose }: QRScannerModalProps)
 
                 const config = {
                     fps: 10,
-                    qrbox: { width: 250, height: 250 },
                     aspectRatio: 1.0,
                     formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE]
                 };
