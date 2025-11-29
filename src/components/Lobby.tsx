@@ -52,7 +52,14 @@ export default function Lobby({ roomId, players, isHost, onStartGame, hostId }: 
                   crown
                 </span>
               )}
-              <span className="truncate w-full">{p.name}</span>
+              <div className="flex items-center gap-2 min-w-0">
+                <img
+                  src={`/animals/${p.avatar}`}
+                  className="w-6 h-6 object-contain rounded-full bg-white border border-gray-300 flex-shrink-0"
+                  alt={p.name}
+                />
+                <span className="truncate">{p.name}</span>
+              </div>
             </div>
           ))}
         </div>

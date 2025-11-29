@@ -3,12 +3,13 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { db } from "@/lib/firebase";
-import { doc, onSnapshot, updateDoc, getDoc, arrayUnion } from "firebase/firestore";
+import { doc, onSnapshot, updateDoc, getDoc, arrayUnion, deleteDoc, addDoc, collection } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
 
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card } from "@/components/ui/Card";
+import Toast from "@/components/ui/Toast";
 
 import { useLanguage } from "@/context/LanguageContext";
 import { Language } from "@/utils/translations";
@@ -19,7 +20,7 @@ import AvatarSelector from "@/components/AvatarSelector";
 import Lobby from "@/components/Lobby";
 import Voting from "@/components/Voting";
 import Results from "@/components/Results";
-import GameOverModal from "@/components/GameOverModal";
+import GameOverScreen from "@/components/GameOverScreen";
 import Chat from "@/components/Chat";
 import VoiceChat from "@/components/VoiceChat";
 
@@ -44,6 +45,8 @@ export default function RoomPage() {
   const [roomData, setRoomData] = useState<RoomData | null>(null);
   const [hasVoted, setHasVoted] = useState(false);
   const [showGameOver, setShowGameOver] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
+  const [showToast, setShowToast] = useState(false);
   const hasJoinedRef = useRef(false);
 
   // ===========================================================
@@ -90,7 +93,12 @@ export default function RoomPage() {
     const roomRef = doc(db, "rooms", roomId as string);
 
     return onSnapshot(roomRef, (docSnap) => {
-      if (!docSnap.exists()) return;
+      if (!docSnap.exists()) {
+        // Room deleted (e.g. by host or timeout)
+        localStorage.removeItem("game_user");
+        router.push("/");
+        return;
+      }
 
       const data = docSnap.data() as RoomData;
       setRoomData(data);
@@ -108,14 +116,33 @@ export default function RoomPage() {
 
     const roomRef = doc(db, "rooms", roomId as string);
 
-    const updatedPlayers = roomData.players.filter((p) => p.id !== currentUser.id);
-    const updatePayload: Partial<RoomData> = { players: updatedPlayers };
-
-    if (roomData.hostId === currentUser.id) {
-      updatePayload.hostId = updatedPlayers[0]?.id || "";
+    // Add "Player Left" message to chat
+    try {
+      await addDoc(collection(db, "rooms", roomId as string, "messages"), {
+        senderId: "system",
+        senderName: "System",
+        text: t("playerLeft", { name: currentUser.name }),
+        createdAt: Date.now()
+      });
+    } catch (err) {
+      console.error("Error sending leave message:", err);
     }
 
-    await updateDoc(roomRef, updatePayload);
+    const updatedPlayers = roomData.players.filter((p) => p.id !== currentUser.id);
+
+    // If no players left, delete room
+    if (updatedPlayers.length === 0) {
+      await deleteDoc(roomRef);
+    } else {
+      const updatePayload: Partial<RoomData> = { players: updatedPlayers };
+
+      if (roomData.hostId === currentUser.id) {
+        updatePayload.hostId = updatedPlayers[0]?.id || "";
+      }
+
+      await updateDoc(roomRef, updatePayload);
+    }
+
     localStorage.removeItem("game_user");
     router.push("/");
   };
@@ -153,13 +180,65 @@ export default function RoomPage() {
 
     await updateDoc(doc(db, "rooms", roomId as string), {
       [`votes.${targetPlayerId}`]: newCount,
+      [`playerVotes.${currentUser?.id}`]: targetPlayerId,
       votedPlayers: arrayUnion(currentUser?.id)
     });
   };
 
   const showResults = async () => {
-    if (!roomId) return;
-    await updateDoc(doc(db, "rooms", roomId as string), { status: "results" });
+    if (!roomId || !roomData) return;
+
+    // Calculate Scores
+    const votes = roomData.votes || {};
+    const players = roomData.players || [];
+
+    // Find winner ID
+    const winnerId = Object.keys(votes).reduce((a, b) =>
+      (votes[a] || 0) > (votes[b] || 0) ? a : b
+      , players[0]?.id);
+
+    // Find players who voted for the winner
+    // We need to track WHO voted for WHOM. 
+    // Currently we only track vote counts: { [targetId]: count } and votedPlayers: [voterId]
+    // We are missing the link of "Voter X voted for Target Y".
+    // To fix this properly without changing data structure too much:
+    // We can't know who voted for whom with current structure.
+    // We need to update castVote to store votes as { [voterId]: targetId } or similar.
+    // BUT, changing data structure now might break things.
+    // Let's check castVote.
+
+    // Wait, I need to check castVote implementation first.
+    // It does: `votes.${targetPlayerId}`: newCount.
+    // It does NOT store who voted for whom.
+
+    // CRITICAL: I cannot implement scoring based on "who voted for winner" without storing that info.
+    // Alternative: The person who got the most votes gets points? 
+    // "Spot The One" usually means "Who is most likely?".
+    // If I am "Most likely to eat pizza", do I get points? Or do people who voted for me get points?
+    // Usually, the goal is to match the majority.
+
+    // I will update castVote to store individual votes in a separate field `playerVotes: { [voterId]: targetId }`.
+    // Then I can calculate scores here.
+
+    // Since I cannot change castVote in this same tool call easily (it's a different function),
+    // I will first update showResults to just set status, AND I will update castVote in the next step.
+    // OR I can do both if they are close. They are in the same file.
+
+    // Let's assume I will update castVote to store `playerVotes`.
+    // So here I will use `roomData.playerVotes`.
+
+    const playerVotes = roomData.playerVotes || {};
+    const updatedPlayers = players.map(p => {
+      if (playerVotes[p.id] === winnerId) {
+        return { ...p, score: (p.score || 0) + 10 }; // +10 points for correct vote
+      }
+      return p;
+    });
+
+    await updateDoc(doc(db, "rooms", roomId as string), {
+      status: "results",
+      players: updatedPlayers
+    });
   };
 
   // ===========================================================
@@ -238,14 +317,46 @@ export default function RoomPage() {
   return (
     <main className="room-wrapper fade-in px-4 md:px-8 w-full max-w-2xl mx-auto">
 
-      {showGameOver && <GameOverModal />}
-
       {/* HEADER */}
       <header className="w-full flex flex-col md:flex-row md:justify-between md:items-center gap-3 py-4 border-b border-gray-mid mb-6">
 
         <div className="flex items-center gap-2 text-xs uppercase tracking-widest">
           <span className="text-gray-500">{t("roomLabel")}</span>
           <span className="text-black font-bold">{roomId}</span>
+          <button
+            onClick={() => {
+              navigator.clipboard.writeText(window.location.href);
+              setShowToast(true);
+            }}
+            className="ml-2 p-1 hover:bg-gray-100 rounded"
+            title="Copy Link"
+          >
+            <span className="material-symbols-outlined text-sm">content_copy</span>
+          </button>
+          {typeof navigator !== "undefined" && navigator.share && (
+            <button
+              onClick={async () => {
+                if (isSharing) return;
+                setIsSharing(true);
+                try {
+                  await navigator.share({
+                    title: "Spot The One",
+                    text: `Join my room: ${roomId}`,
+                    url: window.location.href,
+                  });
+                } catch (err) {
+                  console.log("Share failed or canceled:", err);
+                } finally {
+                  setIsSharing(false);
+                }
+              }}
+              className="p-1 hover:bg-gray-100 rounded disabled:opacity-50"
+              title="Share"
+              disabled={isSharing}
+            >
+              <span className="material-symbols-outlined text-sm">share</span>
+            </button>
+          )}
         </div>
 
         <div className="flex items-center gap-2 text-xs uppercase tracking-widest">
@@ -296,6 +407,7 @@ export default function RoomPage() {
           onShowResults={showResults}
           votedPlayers={roomData.votedPlayers || []}
           votingStartedAt={roomData.votingStartedAt || 0}
+          round={roomData.round || 1}
         />
       )}
 
@@ -306,11 +418,21 @@ export default function RoomPage() {
           votes={roomData.votes}
           isHost={isHost}
           onNextRound={startGame}
+          currentRound={roomData.round || 0}
+          totalQuestions={roomData.questions?.length || 0}
+        />
+      )}
+
+      {roomData.status === "gameover" && (
+        <GameOverScreen
+          roomId={roomId as string}
+          players={roomData.players}
+          isHost={isHost}
         />
       )}
 
       {/* CHAT */}
-      <Chat roomId={roomId as string} currentUser={currentUser} />
+      <Chat roomId={roomId as string} currentUser={currentUser} players={roomData.players} />
 
       {/* VOICE CHAT */}
       <VoiceChat
@@ -318,6 +440,13 @@ export default function RoomPage() {
         currentUser={currentUser}
         players={roomData.players}
         voiceParticipants={roomData.voiceParticipants || []}
+      />
+
+      {/* TOAST NOTIFICATION */}
+      <Toast
+        message={t("linkCopied") || "Link Copied!"}
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
       />
 
     </main>

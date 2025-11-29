@@ -9,9 +9,10 @@ import { Input } from "@/components/ui/Input";
 interface ChatProps {
     roomId: string;
     currentUser: Player;
+    players: Player[];
 }
 
-export default function Chat({ roomId, currentUser }: ChatProps) {
+export default function Chat({ roomId, currentUser, players }: ChatProps) {
     const { t } = useLanguage();
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([]);
@@ -62,7 +63,7 @@ export default function Chat({ roomId, currentUser }: ChatProps) {
                 senderId: currentUser.id,
                 senderName: currentUser.name,
                 text: newMessage.trim(),
-                createdAt: Date.now() // Using client time for simplicity in sorting, or serverTimestamp() if preferred but needs type adjustment
+                createdAt: Date.now()
             });
             setNewMessage("");
         } catch (error) {
@@ -109,27 +110,61 @@ export default function Chat({ roomId, currentUser }: ChatProps) {
                     )}
                     {messages.map((msg) => {
                         const isMe = msg.senderId === currentUser.id;
+                        const isSystem = msg.senderId === "system";
+                        const sender = players.find(p => p.id === msg.senderId);
+                        const avatar = sender ? sender.avatar : "bear.png"; // Fallback
+
+                        if (isSystem) {
+                            return (
+                                <div key={msg.id} className="flex items-center justify-center my-2 opacity-60">
+                                    <div className="h-[1px] bg-gray-400 w-8"></div>
+                                    <span className="mx-2 text-[10px] uppercase tracking-widest text-gray-500 font-medium">
+                                        {msg.text}
+                                    </span>
+                                    <div className="h-[1px] bg-gray-400 w-8"></div>
+                                </div>
+                            );
+                        }
+
                         return (
                             <div
                                 key={msg.id}
-                                className={`flex flex-col ${isMe ? "items-end" : "items-start"}`}
+                                className={`flex ${isMe ? "justify-end" : "justify-start"} items-end gap-2`}
                             >
-                                <div
-                                    className={`max-w-[80%] p-2 rounded-2xl text-sm shadow-sm ${isMe
-                                        ? "bg-black text-white rounded-br-none"
-                                        : "bg-gray-200 text-black rounded-bl-none"
-                                        }`}
-                                >
-                                    {!isMe && (
-                                        <p className="text-[10px] font-bold opacity-70 mb-1 uppercase tracking-wider">
-                                            {msg.senderName}
+                                {!isMe && (
+                                    <img
+                                        src={`/animals/${avatar}`}
+                                        className="w-6 h-6 rounded-full bg-white border border-gray-200 object-contain mb-1"
+                                        alt={msg.senderName}
+                                    />
+                                )}
+
+                                <div className={`flex flex-col ${isMe ? "items-end" : "items-start"} max-w-[75%]`}>
+                                    <div
+                                        className={`p-2 rounded-2xl text-sm shadow-sm w-full ${isMe
+                                            ? "bg-black text-white rounded-br-none"
+                                            : "bg-gray-200 text-black rounded-bl-none"
+                                            }`}
+                                    >
+                                        {!isMe && (
+                                            <p className="text-[10px] font-bold opacity-70 mb-1 uppercase tracking-wider">
+                                                {msg.senderName}
+                                            </p>
+                                        )}
+                                        <p className="break-words">{msg.text}</p>
+                                        <p className={`text-[9px] text-right mt-1 ${isMe ? "text-gray-300" : "text-gray-500"}`}>
+                                            {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                         </p>
-                                    )}
-                                    <p className="break-words">{msg.text}</p>
-                                    <p className={`text-[9px] text-right mt-1 ${isMe ? "text-gray-300" : "text-gray-500"}`}>
-                                        {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                    </p>
+                                    </div>
                                 </div>
+
+                                {isMe && (
+                                    <img
+                                        src={`/animals/${currentUser.avatar}`}
+                                        className="w-6 h-6 rounded-full bg-black border border-gray-200 object-contain mb-1"
+                                        alt="Me"
+                                    />
+                                )}
                             </div>
                         );
                     })}

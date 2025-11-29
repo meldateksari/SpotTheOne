@@ -13,6 +13,7 @@ interface VotingProps {
   onShowResults: () => void;
   votedPlayers: string[];
   votingStartedAt: number;
+  round: number;
 }
 
 export default function Voting({
@@ -24,6 +25,7 @@ export default function Voting({
   onShowResults,
   votedPlayers,
   votingStartedAt,
+  round,
 }: VotingProps) {
   const { t } = useLanguage();
   const [timeLeft, setTimeLeft] = useState(10);
@@ -61,7 +63,7 @@ export default function Voting({
 
       <div className="text-center space-y-4 max-w-2xl">
         <span className="text-xs font-bold tracking-[0.2em] uppercase text-gray-dark">
-          {t("questionLabel")}
+          {t("questionLabel")} {round}
         </span>
         <h1 className="text-3xl md:text-5xl font-bold uppercase tracking-tighter leading-tight">
           {question}

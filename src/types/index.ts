@@ -19,6 +19,7 @@ export interface RoomData {
   votedPlayers?: string[];
   language?: string;
   voiceParticipants?: string[];
+  playerVotes?: { [key: string]: string };
 }
 
 export interface Message {

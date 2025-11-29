@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/Input";
 import { Card } from "@/components/ui/Card";
 import { useLanguage } from "@/context/LanguageContext";
 import AvatarSelector from "@/components/AvatarSelector";
+import QRScannerModal from "@/components/QRScannerModal";
 
 export default function Home() {
   const { t, language } = useLanguage();
@@ -20,6 +21,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [category, setCategory] = useState("general");
   const [avatar, setAvatar] = useState("bear.png");
+  const [showScanner, setShowScanner] = useState(false);
 
   const router = useRouter();
 
@@ -128,12 +130,44 @@ export default function Home() {
   };
 
   // -------------------------------------------------------
+  // QR SCANNER CALLBACK
+  // -------------------------------------------------------
+  const handleScan = (decodedText: string) => {
+    // URL veya düz kod olabilir
+    // Örn: https://spottheone.com/room/ABCDEF -> ABCDEF
+    // veya sadece ABCDEF
+    let code = decodedText;
+    try {
+      if (decodedText.includes("/room/")) {
+        const parts = decodedText.split("/room/");
+        if (parts.length > 1) {
+          code = parts[1];
+        }
+      }
+    } catch (e) {
+      console.error("QR parse error", e);
+    }
+
+    // Temizle (query params vs varsa)
+    code = code.split("?")[0].split("#")[0].toUpperCase();
+
+    setRoomId(code);
+    setShowScanner(false);
+  };
+
+  // -------------------------------------------------------
   // UI
   // -------------------------------------------------------
   return (
     <main className="min-h-screen flex flex-col items-center justify-center px-4 py-8 bg-white">
 
-
+      {/* QR SCANNER MODAL */}
+      {showScanner && (
+        <QRScannerModal
+          onScan={handleScan}
+          onClose={() => setShowScanner(false)}
+        />
+      )}
 
       <div className="w-full max-w-sm space-y-10">
         <div className="text-center space-y-2">
@@ -206,6 +240,14 @@ export default function Home() {
 
           {/* JOIN */}
           <div className="flex w-full gap-2">
+            <button
+              onClick={() => setShowScanner(true)}
+              className="bg-black text-white p-3 rounded hover:bg-gray-800 transition-colors"
+              title="Scan QR"
+            >
+              <span className="material-symbols-outlined">qr_code_scanner</span>
+            </button>
+
             <Input
               placeholder={t("roomCode")}
               value={roomId}

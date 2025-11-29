@@ -296,7 +296,7 @@ export default function VoiceChat({ roomId, currentUser, players, voiceParticipa
     // ===========================================================
 
     return (
-        <div className="fixed bottom-24 right-4 z-40 flex flex-col items-end gap-2">
+        <div className="fixed bottom-24 left-4 z-40 flex flex-col items-start gap-2">
 
             {/* Main Control Button (Toggle Panel) */}
             <button
@@ -414,7 +414,7 @@ export default function VoiceChat({ roomId, currentUser, players, voiceParticipa
                         })}
 
                         {voiceParticipants.length === 0 && (
-                            <p className="text-gray-400 text-xs text-center py-2">Empty Room</p>
+                            <p className="text-gray-400 text-xs text-center py-2">{t("emptyRoom")}</p>
                         )}
                     </div>
 

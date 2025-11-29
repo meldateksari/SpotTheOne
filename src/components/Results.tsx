@@ -22,6 +22,8 @@ interface ResultsProps {
   votes: { [key: string]: number };
   isHost: boolean;
   onNextRound: () => void;
+  currentRound: number;
+  totalQuestions: number;
 }
 
 
@@ -31,6 +33,8 @@ export default function Results({
   votes,
   isHost,
   onNextRound,
+  currentRound,
+  totalQuestions
 }: ResultsProps) {
   const { t } = useLanguage();
   // En çok oy alanı bul (Linç edilecek kişi)
@@ -84,6 +88,8 @@ export default function Results({
     },
   };
 
+  const isLastRound = currentRound >= totalQuestions;
+
   return (
     <div className="w-full max-w-4xl mx-auto p-6 flex flex-col items-center space-y-12 fade-in">
       <div className="text-center space-y-4">
@@ -115,7 +121,7 @@ export default function Results({
             variant="primary"
             className="w-full"
           >
-            {t("nextQuestion")}
+            {isLastRound ? t("finishGame") : t("nextQuestion")}
           </Button>
         </div>
       )}

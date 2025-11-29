@@ -60,7 +60,14 @@ export const translations: Record<Language, Record<string, string>> = {
         unmute: "Sesi Aç",
         deafen: "Sağırlaştır",
         undeafen: "Duy",
-        you: "Sen"
+        you: "Sen",
+        linkCopied: "Link Kopyalandı!",
+        finishGame: "OYUNU BİTİR VE SONUÇLARI GÖSTER",
+        roomClosingIn: "Oda {seconds} saniye içinde kapanacak...",
+        finalResults: "GENEL SONUÇLAR",
+        leaderboard: "SIRALAMA",
+        playerLeft: "{name} odadan ayrıldı.",
+        emptyRoom: "Boş Oda"
     },
     en: {
         enterName: "Please enter your name!",
@@ -121,7 +128,14 @@ export const translations: Record<Language, Record<string, string>> = {
         unmute: "Unmute",
         deafen: "Deafen",
         undeafen: "Undeafen",
-        you: "You"
+        you: "You",
+        linkCopied: "Link Copied!",
+        finishGame: "FINISH GAME & SHOW RESULTS",
+        roomClosingIn: "Room closing in {seconds} seconds...",
+        finalResults: "FINAL RESULTS",
+        leaderboard: "LEADERBOARD",
+        playerLeft: "{name} left the room.",
+        emptyRoom: "Empty Room"
     },
     de: {
         enterName: "Bitte gib deinen Namen ein!",
@@ -182,7 +196,14 @@ export const translations: Record<Language, Record<string, string>> = {
         unmute: "Laut",
         deafen: "Taub",
         undeafen: "Hören",
-        you: "Du"
+        you: "Du",
+        linkCopied: "Link Kopiert!",
+        finishGame: "SPIEL BEENDEN & ERGEBNISSE ANZEIGEN",
+        roomClosingIn: "Raum schließt in {seconds} Sekunden...",
+        finalResults: "ENDERGEBNISSE",
+        leaderboard: "RANGLISTE",
+        playerLeft: "{name} hat den Raum verlassen.",
+        emptyRoom: "Leerer Raum"
     },
     es: {
         enterName: "¡Por favor, introduce tu nombre!",
@@ -243,7 +264,14 @@ export const translations: Record<Language, Record<string, string>> = {
         unmute: "Activar",
         deafen: "Ensordecer",
         undeafen: "Escuchar",
-        you: "Tú"
+        you: "Tú",
+        linkCopied: "¡Enlace Copiado!",
+        finishGame: "TERMINAR JUEGO Y MOSTRAR RESULTADOS",
+        roomClosingIn: "La sala se cerrará en {seconds} segundos...",
+        finalResults: "RESULTADOS FINALES",
+        leaderboard: "TABLA DE CLASIFICACIÓN",
+        playerLeft: "{name} salió de la sala.",
+        emptyRoom: "Sala Vacía"
     },
     ru: {
         enterName: "Пожалуйста, введите ваше имя!",
@@ -304,6 +332,13 @@ export const translations: Record<Language, Record<string, string>> = {
         unmute: "Анмут",
         deafen: "Заглушить",
         undeafen: "Слушать",
-        you: "Вы"
+        you: "Вы",
+        linkCopied: "Ссылка скопирована!",
+        finishGame: "ЗАВЕРШИТЬ ИГРУ И ПОКАЗАТЬ РЕЗУЛЬТАТЫ",
+        roomClosingIn: "Комната закроется через {seconds} секунд...",
+        finalResults: "ИТОГОВЫЕ РЕЗУЛЬТАТЫ",
+        leaderboard: "ТАБЛИЦА ЛИДЕРОВ",
+        playerLeft: "{name} покинул комнату.",
+        emptyRoom: "Пустая Комната"
     }
 };
