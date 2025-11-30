@@ -24,6 +24,9 @@ import GameOverScreen from "@/components/features/game/GameOverScreen";
 import Chat from "@/components/features/chat/Chat";
 import VoiceChat from "@/components/features/chat/VoiceChat";
 
+import AlertModal from "@/components/ui/AlertModal";
+import { Tooltip } from "@/components/ui/Tooltip";
+
 export default function RoomPage() {
   const { id: roomId } = useParams();
   const router = useRouter();
@@ -47,6 +50,12 @@ export default function RoomPage() {
   const [showGameOver, setShowGameOver] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
   const [showToast, setShowToast] = useState(false);
+
+  // ALERT STATE
+  const [alertInfo, setAlertInfo] = useState<{ show: boolean; message: string; title?: string }>({
+    show: false,
+    message: "",
+  });
 
   // Refs for state access in effects/callbacks
   const joinedRoomIdRef = useRef<string | null>(null);
@@ -86,8 +95,11 @@ export default function RoomPage() {
 
         // 🔥 CHECK IF GAME STARTED
         if (!alreadyInRoom && data.status !== "lobby") {
-          alert(t("gameAlreadyStarted"));
-          router.push("/");
+          setAlertInfo({
+            show: true,
+            title: t("error") || "Error",
+            message: t("gameAlreadyStarted"),
+          });
           return;
         }
 
@@ -102,7 +114,11 @@ export default function RoomPage() {
 
       } catch (err) {
         console.error("Join error:", err);
-        alert(t("roomJoinError"));
+        setAlertInfo({
+          show: true,
+          title: t("error") || "Error",
+          message: t("roomJoinError"),
+        });
       }
     };
 
@@ -359,6 +375,7 @@ export default function RoomPage() {
                 placeholder={t("yourName")}
                 className="text-center uppercase tracking-widest w-full"
                 required
+                maxLength={15}
               />
             </div>
 
@@ -433,7 +450,9 @@ export default function RoomPage() {
             className="w-8 h-8 object-contain rounded"
           />
 
-          <span>{currentUser.name}</span>
+          <Tooltip content={currentUser.name} className="truncate max-w-[100px] md:max-w-[150px]">
+            {currentUser.name}
+          </Tooltip>
 
           {isHost && (
             <span className="bg-black text-white px-2 py-1 text-[10px] tracking-widest">
@@ -516,6 +535,17 @@ export default function RoomPage() {
         message={t("linkCopied") || "Link Copied!"}
         isVisible={showToast}
         onClose={() => setShowToast(false)}
+      />
+
+      {/* ALERT MODAL */}
+      <AlertModal
+        isOpen={alertInfo.show}
+        title={alertInfo.title}
+        message={alertInfo.message}
+        onClose={() => {
+          setAlertInfo({ ...alertInfo, show: false });
+          router.push("/");
+        }}
       />
 
     </main>

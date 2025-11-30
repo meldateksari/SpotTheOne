@@ -461,7 +461,7 @@ export default function VoiceChat({ roomId, currentUser, players, voiceParticipa
                                             )}
                                         </div>
 
-                                        <span className="truncate font-medium flex items-center gap-1">
+                                        <span className="truncate font-medium flex items-center gap-1 max-w-[100px]">
                                             {isMe ? `${t("you")}` : p.name}
                                             {p.id === hostId && (
                                                 <span className="material-symbols-outlined text-[14px] text-yellow-600" title={t("hostLabel")}>

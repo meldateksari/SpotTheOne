@@ -3,6 +3,7 @@ import { Player } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { useLanguage } from "@/context/LanguageContext";
+import { Tooltip } from "@/components/ui/Tooltip";
 import { useState } from "react";
 
 interface LobbyProps {
@@ -60,7 +61,9 @@ export default function Lobby({ roomId, players, isHost, onStartGame, hostId }: 
                   className="w-6 h-6 object-contain rounded-full bg-white border border-gray-300 flex-shrink-0"
                   alt={p.name}
                 />
-                <span className="truncate" title={p.name}>{p.name}</span>
+                <Tooltip content={p.name} className="truncate">
+                  {p.name}
+                </Tooltip>
               </div>
             </div>
           ))}

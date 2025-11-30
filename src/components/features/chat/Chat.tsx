@@ -147,7 +147,7 @@ export default function Chat({ roomId, currentUser, players }: ChatProps) {
                                             }`}
                                     >
                                         {!isMe && (
-                                            <p className="text-[10px] font-bold opacity-70 mb-1 uppercase tracking-wider">
+                                            <p className="text-[10px] font-bold opacity-70 mb-1 uppercase tracking-wider truncate max-w-[150px]">
                                                 {msg.senderName}
                                             </p>
                                         )}

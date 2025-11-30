@@ -197,6 +197,7 @@ export default function Home() {
                 placeholder={t("yourName")}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                maxLength={15}
                 className="text-center uppercase tracking-widest w-full"
               />
             </div>
