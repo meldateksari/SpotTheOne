@@ -39,6 +39,8 @@ export default function VoiceChat({ roomId, currentUser, players, voiceParticipa
     const audioContextRef = useRef<AudioContext | null>(null);
     const analysersRef = useRef<{ [key: string]: AnalyserNode }>({});
     const animationFrameRef = useRef<number | null>(null);
+    const peerRef = useRef<Peer | null>(null);
+    const isInVoiceRef = useRef(false);
 
     // ===========================================================
     // JOIN / LEAVE LOGIC
@@ -72,11 +74,13 @@ export default function VoiceChat({ roomId, currentUser, players, voiceParticipa
                 console.log("My Peer ID:", id);
                 setMyPeerId(id);
                 setPeer(localPeer);
+                peerRef.current = localPeer;
                 setIsInVoice(true);
+                isInVoiceRef.current = true;
                 setIsConnecting(false); // Stop loading
 
-                // Update Firestore: Add me to voiceParticipants AND save my peerId
-                await updateRoomData(id, true);
+                // Update Firestore: Add me to voiceParticipants AND save my peerId AND set initial mute state
+                await updateRoomData(id, true, true); // Default isMuted = true
             });
 
             localPeer.on("call", (call) => {
@@ -118,8 +122,10 @@ export default function VoiceChat({ roomId, currentUser, players, voiceParticipa
 
         // Cleanup state
         setPeer(null);
+        peerRef.current = null;
         setMyPeerId(null);
         setIsInVoice(false);
+        isInVoiceRef.current = false;
         setIsConnecting(false);
         myStreamRef.current = null;
         peersRef.current = {};
@@ -141,10 +147,10 @@ export default function VoiceChat({ roomId, currentUser, players, voiceParticipa
         setAudioLevels({}); // Reset levels
 
         // Update Firestore
-        await updateRoomData(null, false);
+        await updateRoomData(null, false, false);
     };
 
-    const updateRoomData = async (peerId: string | null, joining: boolean) => {
+    const updateRoomData = async (peerId: string | null, joining: boolean, muted: boolean = false) => {
         const roomRef = doc(db, "rooms", roomId);
         try {
             await updateDoc(roomRef, {
@@ -156,13 +162,29 @@ export default function VoiceChat({ roomId, currentUser, players, voiceParticipa
                 if (snap.exists()) {
                     const data = snap.data() as RoomData;
                     const updatedPlayers = data.players.map(p =>
-                        p.id === currentUser.id ? { ...p, peerId } : p
+                        p.id === currentUser.id ? { ...p, peerId, isMuted: muted } : p
                     );
                     await updateDoc(roomRef, { players: updatedPlayers });
                 }
             }
         } catch (err) {
             console.error("Error updating room data:", err);
+        }
+    };
+
+    const updateMuteStatus = async (muted: boolean) => {
+        const roomRef = doc(db, "rooms", roomId);
+        try {
+            const snap = await getDoc(roomRef);
+            if (snap.exists()) {
+                const data = snap.data() as RoomData;
+                const updatedPlayers = data.players.map(p =>
+                    p.id === currentUser.id ? { ...p, isMuted: muted } : p
+                );
+                await updateDoc(roomRef, { players: updatedPlayers });
+            }
+        } catch (err) {
+            console.error("Error updating mute status:", err);
         }
     };
 
@@ -242,6 +264,43 @@ export default function VoiceChat({ roomId, currentUser, players, voiceParticipa
 
     }, [voiceParticipants, players, peer, myPeerId, isInVoice]);
 
+    // ===========================================================
+    // CLEANUP ON UNMOUNT
+    // ===========================================================
+    useEffect(() => {
+        return () => {
+            if (isInVoiceRef.current) {
+                console.log("Cleaning up voice connection on unmount...");
+
+                // Destroy Peer
+                if (peerRef.current) {
+                    peerRef.current.destroy();
+                    peerRef.current = null;
+                }
+
+                // Stop Stream
+                if (myStreamRef.current) {
+                    myStreamRef.current.getTracks().forEach(track => track.stop());
+                    myStreamRef.current = null;
+                }
+
+                // Cleanup Audio Context
+                if (audioContextRef.current) {
+                    audioContextRef.current.close();
+                    audioContextRef.current = null;
+                }
+
+                if (animationFrameRef.current) {
+                    cancelAnimationFrame(animationFrameRef.current);
+                }
+
+                // Remove from Firestore
+                // Note: We use the captured props here. If roomId changed, this cleanup runs for the OLD roomId.
+                updateRoomData(null, false);
+            }
+        };
+    }, [roomId, currentUser.id]); // Re-run cleanup if room or user changes
+
     const addAudioStream = (peerId: string, stream: MediaStream) => {
         if (!audioRefs.current[peerId]) {
             const audio = new Audio();
@@ -260,6 +319,7 @@ export default function VoiceChat({ roomId, currentUser, players, voiceParticipa
                 track.enabled = !track.enabled;
             });
             setIsMuted(!isMuted);
+            updateMuteStatus(!isMuted);
         }
     };
 
@@ -400,6 +460,7 @@ export default function VoiceChat({ roomId, currentUser, players, voiceParticipa
                                                 </div>
                                             )}
                                         </div>
+
                                         <span className="truncate font-medium flex items-center gap-1">
                                             {isMe ? `${t("you")}` : p.name}
                                             {p.id === hostId && (
@@ -407,19 +468,27 @@ export default function VoiceChat({ roomId, currentUser, players, voiceParticipa
                                                     crown
                                                 </span>
                                             )}
+                                            {/* Mute Indicator */}
+                                            {p.isMuted && (
+                                                <span className="material-symbols-outlined text-[16px] text-red-500" title={t("muted")}>
+                                                    mic_off
+                                                </span>
+                                            )}
                                         </span>
                                     </div>
 
-                                    {isInVoice && !isMe && p.peerId && (
-                                        <button
-                                            onClick={() => toggleMutePeer(p.peerId!)}
-                                            className={`text-gray-400 hover:text-black ${isPeerMuted ? "text-red-500" : ""}`}
-                                        >
-                                            <span className="material-symbols-outlined text-lg">
-                                                {isPeerMuted ? "volume_off" : "volume_up"}
-                                            </span>
-                                        </button>
-                                    )}
+                                    {
+                                        isInVoice && !isMe && p.peerId && (
+                                            <button
+                                                onClick={() => toggleMutePeer(p.peerId!)}
+                                                className={`text-gray-400 hover:text-black ${isPeerMuted ? "text-red-500" : ""}`}
+                                            >
+                                                <span className="material-symbols-outlined text-lg">
+                                                    {isPeerMuted ? "volume_off" : "volume_up"}
+                                                </span>
+                                            </button>
+                                        )
+                                    }
                                 </div>
                             );
                         })}
@@ -430,8 +499,9 @@ export default function VoiceChat({ roomId, currentUser, players, voiceParticipa
                     </div>
 
                 </div>
-            )}
+            )
+            }
 
-        </div>
+        </div >
     );
 }

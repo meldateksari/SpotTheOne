@@ -38,14 +38,14 @@ export default function Home() {
   // -------------------------------------------------------
   if (isLoading) {
     return (
-      <main className="min-h-screen flex flex-col items-center justify-center p-6 bg-white fade-in">
+      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white fade-in">
         <div className="flex flex-col items-center space-y-4">
           <div className="spinner"></div>
           <p className="text-sm uppercase tracking-widest text-gray-dark animate-pulse">
             {t("generating", { count: questionCount })}
           </p>
         </div>
-      </main>
+      </div>
     );
   }
 

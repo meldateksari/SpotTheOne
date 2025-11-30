@@ -5,6 +5,7 @@ export interface Player {
   score?: number;
   avatar: string;
   peerId?: string;
+  isMuted?: boolean;
 }
 
 export interface RoomData {

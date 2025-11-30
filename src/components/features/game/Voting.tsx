@@ -78,15 +78,16 @@ export default function Voting({
             key={player.id}
             onClick={() => onVote(player.id)}
             disabled={hasVoted}
+            title={player.name}
             className={`
-              relative p-6 text-sm font-bold uppercase tracking-widest transition-all duration-300 border
+              relative p-6 text-sm font-bold uppercase tracking-widest transition-all duration-300 border break-words
               ${hasVoted
                 ? "bg-gray-light text-gray-400 border-transparent cursor-not-allowed"
                 : "bg-white text-black border-gray-mid hover:bg-black hover:text-white hover:border-black"
               }
             `}
           >
-            {player.name}
+            <span className="line-clamp-2">{player.name}</span>
           </button>
         ))}
       </div>

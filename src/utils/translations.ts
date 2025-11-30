@@ -79,7 +79,8 @@ export const translations: Record<Language, Record<string, string>> = {
         step3: "Sonuçları Gör",
         step3Desc: "Herkes oy verdikten sonra sonuçlar açıklanır. En çok oy alan kişi puan kazanır!",
         durationSelection: "Süre Seçimi",
-        secondsShort: "sn"
+        secondsShort: "sn",
+        gameAlreadyStarted: "Oyun zaten başladı! Katılamazsınız."
     },
     en: {
         enterName: "Please enter your name!",
@@ -159,7 +160,8 @@ export const translations: Record<Language, Record<string, string>> = {
         step3: "See Results",
         step3Desc: "After everyone votes, results are revealed. The person with the most votes gets points!",
         durationSelection: "Duration Selection",
-        secondsShort: "s"
+        secondsShort: "s",
+        gameAlreadyStarted: "The game has already started! You cannot join."
     },
     de: {
         enterName: "Bitte gib deinen Namen ein!",
@@ -239,7 +241,8 @@ export const translations: Record<Language, Record<string, string>> = {
         step3: "Ergebnisse sehen",
         step3Desc: "Nachdem alle abgestimmt haben, werden die Ergebnisse enthüllt. Die Person mit den meisten Stimmen erhält Punkte!",
         durationSelection: "Dauerauswahl",
-        secondsShort: "s"
+        secondsShort: "s",
+        gameAlreadyStarted: "Das Spiel hat bereits begonnen! Du kannst nicht beitreten."
     },
     es: {
         enterName: "¡Por favor, introduce tu nombre!",
@@ -319,7 +322,8 @@ export const translations: Record<Language, Record<string, string>> = {
         step3: "Ver Resultados",
         step3Desc: "Después de que todos voten, se revelan los resultados. ¡La persona con más votos obtiene puntos!",
         durationSelection: "Selección de Duración",
-        secondsShort: "s"
+        secondsShort: "s",
+        gameAlreadyStarted: "¡El juego ya ha comenzado! No puedes unirte."
     },
     ru: {
         enterName: "Пожалуйста, введите ваше имя!",
@@ -399,6 +403,7 @@ export const translations: Record<Language, Record<string, string>> = {
         step3: "Смотреть результаты",
         step3Desc: "После того как все проголосуют, результаты будут открыты. Человек с наибольшим количеством голосов получает очки!",
         durationSelection: "Выбор времени",
-        secondsShort: "с"
+        secondsShort: "с",
+        gameAlreadyStarted: "Игра уже началась! Вы не можете присоединиться."
     }
 };

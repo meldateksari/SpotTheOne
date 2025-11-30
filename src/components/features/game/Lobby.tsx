@@ -15,7 +15,7 @@ interface LobbyProps {
 
 export default function Lobby({ roomId, players, isHost, onStartGame, hostId }: LobbyProps) {
   const { t } = useLanguage();
-  const [duration, setDuration] = useState(30);
+  const [duration, setDuration] = useState(15);
   const shareUrl =
     typeof window !== "undefined"
       ? `${window.location.origin}/room/${roomId}`
@@ -60,7 +60,7 @@ export default function Lobby({ roomId, players, isHost, onStartGame, hostId }: 
                   className="w-6 h-6 object-contain rounded-full bg-white border border-gray-300 flex-shrink-0"
                   alt={p.name}
                 />
-                <span className="truncate">{p.name}</span>
+                <span className="truncate" title={p.name}>{p.name}</span>
               </div>
             </div>
           ))}
@@ -74,7 +74,7 @@ export default function Lobby({ roomId, players, isHost, onStartGame, hostId }: 
             <span className="text-sm font-bold">{duration}{t("secondsShort")}</span>
           </div>
           <div className="grid grid-cols-3 gap-2">
-            {[10, 30, 60].map((d) => (
+            {[10, 15, 20].map((d) => (
               <button
                 key={d}
                 onClick={() => setDuration(d)}

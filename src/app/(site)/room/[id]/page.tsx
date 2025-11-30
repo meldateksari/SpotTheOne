@@ -83,6 +83,14 @@ export default function RoomPage() {
         if (data.language) setLanguage(data.language as Language);
 
         const alreadyInRoom = players.some((p) => p.id === currentUser.id);
+
+        // 🔥 CHECK IF GAME STARTED
+        if (!alreadyInRoom && data.status !== "lobby") {
+          alert(t("gameAlreadyStarted"));
+          router.push("/");
+          return;
+        }
+
         if (!alreadyInRoom) {
           await updateDoc(roomRef, {
             players: [...players, currentUser]
