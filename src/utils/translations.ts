@@ -80,7 +80,9 @@ export const translations: Record<Language, Record<string, string>> = {
         step3Desc: "Herkes oy verdikten sonra sonuçlar açıklanır. En çok oy alan kişi puan kazanır!",
         durationSelection: "Süre Seçimi",
         secondsShort: "sn",
-        gameAlreadyStarted: "Oyun zaten başladı! Katılamazsınız."
+        gameAlreadyStarted: "Oyun zaten başladı! Katılamazsınız.",
+        reply: "Yanıtla",
+        replyingTo: "Yanıtlanan:"
     },
     en: {
         enterName: "Please enter your name!",
@@ -161,7 +163,9 @@ export const translations: Record<Language, Record<string, string>> = {
         step3Desc: "After everyone votes, results are revealed. The person with the most votes gets points!",
         durationSelection: "Duration Selection",
         secondsShort: "s",
-        gameAlreadyStarted: "The game has already started! You cannot join."
+        gameAlreadyStarted: "The game has already started! You cannot join.",
+        reply: "Reply",
+        replyingTo: "Replying to:"
     },
     de: {
         enterName: "Bitte gib deinen Namen ein!",
@@ -242,7 +246,9 @@ export const translations: Record<Language, Record<string, string>> = {
         step3Desc: "Nachdem alle abgestimmt haben, werden die Ergebnisse enthüllt. Die Person mit den meisten Stimmen erhält Punkte!",
         durationSelection: "Dauerauswahl",
         secondsShort: "s",
-        gameAlreadyStarted: "Das Spiel hat bereits begonnen! Du kannst nicht beitreten."
+        gameAlreadyStarted: "Das Spiel hat bereits begonnen! Du kannst nicht beitreten.",
+        reply: "Antworten",
+        replyingTo: "Antwort an:"
     },
     es: {
         enterName: "¡Por favor, introduce tu nombre!",
@@ -323,7 +329,9 @@ export const translations: Record<Language, Record<string, string>> = {
         step3Desc: "Después de que todos voten, se revelan los resultados. ¡La persona con más votos obtiene puntos!",
         durationSelection: "Selección de Duración",
         secondsShort: "s",
-        gameAlreadyStarted: "¡El juego ya ha comenzado! No puedes unirte."
+        gameAlreadyStarted: "¡El juego ya ha comenzado! No puedes unirte.",
+        reply: "Responder",
+        replyingTo: "Respondiendo a:"
     },
     ru: {
         enterName: "Пожалуйста, введите ваше имя!",
@@ -404,6 +412,8 @@ export const translations: Record<Language, Record<string, string>> = {
         step3Desc: "После того как все проголосуют, результаты будут открыты. Человек с наибольшим количеством голосов получает очки!",
         durationSelection: "Выбор времени",
         secondsShort: "с",
-        gameAlreadyStarted: "Игра уже началась! Вы не можете присоединиться."
+        gameAlreadyStarted: "Игра уже началась! Вы не можете присоединиться.",
+        reply: "Ответить",
+        replyingTo: "Ответ:"
     }
 };

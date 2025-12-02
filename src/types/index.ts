@@ -32,4 +32,9 @@ export interface Message {
   createdAt: number;
   translationKey?: string;
   translationParams?: Record<string, string | number>;
+  replyTo?: {
+    id: string;
+    senderName: string;
+    text: string;
+  };
 }

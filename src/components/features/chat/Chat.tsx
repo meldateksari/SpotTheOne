@@ -5,6 +5,7 @@ import { Message, Player } from "@/types";
 import { useLanguage } from "@/context/LanguageContext";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 
 interface ChatProps {
     roomId: string;
@@ -17,6 +18,8 @@ export default function Chat({ roomId, currentUser, players }: ChatProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState("");
+    const [replyingTo, setReplyingTo] = useState<Message | null>(null);
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const [hasUnread, setHasUnread] = useState(false);
     const isFirstLoad = useRef(true);
@@ -59,16 +62,39 @@ export default function Chat({ roomId, currentUser, players }: ChatProps) {
         if (!newMessage.trim()) return;
 
         try {
-            await addDoc(collection(db, "rooms", roomId, "messages"), {
+            const messageData: any = {
                 senderId: currentUser.id,
                 senderName: currentUser.name,
                 text: newMessage.trim(),
                 createdAt: Date.now()
-            });
+            };
+
+            if (replyingTo) {
+                messageData.replyTo = {
+                    id: replyingTo.id,
+                    senderName: replyingTo.senderName,
+                    text: replyingTo.text
+                };
+            }
+
+            await addDoc(collection(db, "rooms", roomId, "messages"), messageData);
             setNewMessage("");
+            setReplyingTo(null);
+            setShowEmojiPicker(false);
         } catch (error) {
             console.error("Error sending message:", error);
         }
+    };
+
+    const onEmojiClick = (emojiData: EmojiClickData) => {
+        setNewMessage((prev) => prev + emojiData.emoji);
+    };
+
+    const handleReply = (msg: Message) => {
+        setReplyingTo(msg);
+        // Focus input
+        const input = document.querySelector('input[type="text"]') as HTMLInputElement;
+        if (input) input.focus();
     };
 
     return (
@@ -141,11 +167,28 @@ export default function Chat({ roomId, currentUser, players }: ChatProps) {
 
                                 <div className={`flex flex-col ${isMe ? "items-end" : "items-start"} max-w-[75%]`}>
                                     <div
-                                        className={`p-2 rounded-2xl text-sm shadow-sm w-full ${isMe
+                                        className={`p-2 rounded-2xl text-sm shadow-sm w-full relative group ${isMe
                                             ? "bg-black text-white rounded-br-none"
                                             : "bg-gray-200 text-black rounded-bl-none"
                                             }`}
                                     >
+                                        {/* Reply Context */}
+                                        {msg.replyTo && (
+                                            <div className={`mb-2 p-2 rounded text-xs border-l-4 ${isMe ? "bg-gray-800 border-gray-500" : "bg-gray-300 border-gray-500"
+                                                } opacity-80`}>
+                                                <p className="font-bold text-[10px]">{msg.replyTo.senderName}</p>
+                                                <p className="truncate">{msg.replyTo.text}</p>
+                                            </div>
+                                        )}
+
+                                        {/* Reply Button (Visible on Hover) */}
+                                        <button
+                                            onClick={() => handleReply(msg)}
+                                            className={`absolute top-0 ${isMe ? "-left-8" : "-right-8"} p-1 rounded-full bg-gray-100 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity`}
+                                            title={t("reply")}
+                                        >
+                                            <span className="material-symbols-outlined text-sm text-black">reply</span>
+                                        </button>
                                         {!isMe && (
                                             <p className="text-[10px] font-bold opacity-70 mb-1 uppercase tracking-wider truncate max-w-[150px]">
                                                 {msg.senderName}
@@ -171,8 +214,40 @@ export default function Chat({ roomId, currentUser, players }: ChatProps) {
                     <div ref={messagesEndRef} />
                 </div>
 
+                {/* Reply Preview */}
+                {replyingTo && (
+                    <div className="p-2 bg-gray-100 border-t border-gray-200 flex justify-between items-center">
+                        <div className="text-xs border-l-4 border-black pl-2">
+                            <p className="font-bold text-black">{t("replyingTo")} {replyingTo.senderName}</p>
+                            <p className="text-gray-600 truncate max-w-[200px]">{replyingTo.text}</p>
+                        </div>
+                        <button onClick={() => setReplyingTo(null)} className="text-gray-500 hover:text-black">
+                            <span className="material-symbols-outlined text-sm">close</span>
+                        </button>
+                    </div>
+                )}
+
+                {/* Emoji Picker */}
+                {showEmojiPicker && (
+                    <div className="absolute bottom-16 left-0 w-full z-50">
+                        <EmojiPicker
+                            onEmojiClick={onEmojiClick}
+                            width="100%"
+                            height={300}
+                            previewConfig={{ showPreview: false }}
+                        />
+                    </div>
+                )}
+
                 {/* Input */}
-                <form onSubmit={sendMessage} className="p-3 border-t border-gray-200 bg-white flex gap-2">
+                <form onSubmit={sendMessage} className="p-3 border-t border-gray-200 bg-white flex gap-2 items-center">
+                    <button
+                        type="button"
+                        onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                        className={`text-gray-500 hover:text-black transition-colors ${showEmojiPicker ? "text-yellow-500" : ""}`}
+                    >
+                        <span className="material-symbols-outlined">sentiment_satisfied</span>
+                    </button>
                     <input
                         type="text"
                         value={newMessage}
