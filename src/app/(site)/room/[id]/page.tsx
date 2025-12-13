@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { db } from "@/lib/firebase";
+import { db } from "@/lib/firebase.client";
 import { doc, onSnapshot, updateDoc, getDoc, arrayUnion, deleteDoc, addDoc, collection } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
 

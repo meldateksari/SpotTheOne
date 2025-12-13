@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import confetti from "canvas-confetti";
 import { useRouter } from "next/navigation";
 import { doc, deleteDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { db } from "@/lib/firebase.client";
 import { Button } from "@/components/ui/Button";
 import { useLanguage } from "@/context/LanguageContext";
 import { Player } from "@/types";

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
-import { db } from "@/lib/firebase";
+import { db } from "@/lib/firebase.client";
 import { doc, setDoc } from "firebase/firestore";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";

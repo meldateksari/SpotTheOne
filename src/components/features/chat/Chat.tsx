@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { db } from "@/lib/firebase";
+import { db } from "@/lib/firebase.client";
 import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "firebase/firestore";
 import { Message, Player } from "@/types";
 import { useLanguage } from "@/context/LanguageContext";

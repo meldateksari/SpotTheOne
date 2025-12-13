@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import Peer from "peerjs";
 import { Player, RoomData } from "@/types";
 import { doc, updateDoc, getDoc, arrayUnion, arrayRemove } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { db } from "@/lib/firebase.client";
 import { useLanguage } from "@/context/LanguageContext";
 
 interface VoiceChatProps {
