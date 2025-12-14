@@ -82,7 +82,19 @@ export const translations: Record<Language, Record<string, string>> = {
         secondsShort: "sn",
         gameAlreadyStarted: "Oyun zaten başladı! Katılamazsınız.",
         reply: "Yanıtla",
-        replyingTo: "Yanıtlanan:"
+        replyingTo: "Yanıtlanan:",
+        // Admin
+        adminLogin: "Yönetici Girişi",
+        email: "E-posta",
+        password: "Şifre",
+        login: "Giriş Yap",
+        loggingIn: "Giriş Yapılıyor...",
+        dashboard: "Kontrol Paneli",
+        questions: "Sorular",
+        users: "Kullanıcılar",
+        settings: "Ayarlar",
+        logout: "Çıkış Yap",
+        adminPanel: "Admin Paneli"
     },
     en: {
         enterName: "Please enter your name!",
@@ -165,7 +177,19 @@ export const translations: Record<Language, Record<string, string>> = {
         secondsShort: "s",
         gameAlreadyStarted: "The game has already started! You cannot join.",
         reply: "Reply",
-        replyingTo: "Replying to:"
+        replyingTo: "Replying to:",
+        // Admin
+        adminLogin: "Admin Login",
+        email: "Email",
+        password: "Password",
+        login: "Log In",
+        loggingIn: "Logging In...",
+        dashboard: "Dashboard",
+        questions: "Questions",
+        users: "Users",
+        settings: "Settings",
+        logout: "Log Out",
+        adminPanel: "Admin Panel"
     },
     de: {
         enterName: "Bitte gib deinen Namen ein!",
@@ -248,7 +272,19 @@ export const translations: Record<Language, Record<string, string>> = {
         secondsShort: "s",
         gameAlreadyStarted: "Das Spiel hat bereits begonnen! Du kannst nicht beitreten.",
         reply: "Antworten",
-        replyingTo: "Antwort an:"
+        replyingTo: "Antwort an:",
+        // Admin
+        adminLogin: "Admin Login",
+        email: "E-Mail",
+        password: "Passwort",
+        login: "Anmelden",
+        loggingIn: "Anmelden...",
+        dashboard: "Dashboard",
+        questions: "Fragen",
+        users: "Benutzer",
+        settings: "Einstellungen",
+        logout: "Abmelden",
+        adminPanel: "Admin-Bereich"
     },
     es: {
         enterName: "¡Por favor, introduce tu nombre!",
@@ -331,7 +367,19 @@ export const translations: Record<Language, Record<string, string>> = {
         secondsShort: "s",
         gameAlreadyStarted: "¡El juego ya ha comenzado! No puedes unirte.",
         reply: "Responder",
-        replyingTo: "Respondiendo a:"
+        replyingTo: "Respondiendo a:",
+        // Admin
+        adminLogin: "Acceso Admin",
+        email: "Correo",
+        password: "Contraseña",
+        login: "Entrar",
+        loggingIn: "Entrando...",
+        dashboard: "Tablero",
+        questions: "Preguntas",
+        users: "Usuarios",
+        settings: "Ajustes",
+        logout: "Cerrar Sesión",
+        adminPanel: "Panel Admin"
     },
     ru: {
         enterName: "Пожалуйста, введите ваше имя!",
@@ -414,6 +462,18 @@ export const translations: Record<Language, Record<string, string>> = {
         secondsShort: "с",
         gameAlreadyStarted: "Игра уже началась! Вы не можете присоединиться.",
         reply: "Ответить",
-        replyingTo: "Ответ:"
+        replyingTo: "Ответ:",
+        // Admin
+        adminLogin: "Вход Админа",
+        email: "Эл. почта",
+        password: "Пароль",
+        login: "Войти",
+        loggingIn: "Вход...",
+        dashboard: "Панель",
+        questions: "Вопросы",
+        users: "Пользователи",
+        settings: "Настройки",
+        logout: "Выйти",
+        adminPanel: "Админ Панель"
     }
 };
