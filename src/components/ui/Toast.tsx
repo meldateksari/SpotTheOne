@@ -14,11 +14,13 @@ export default function Toast({ message, isVisible, onClose, duration = 3000 }: 
     const [shouldRender, setShouldRender] = useState(false);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setMounted(true);
     }, []);
 
     useEffect(() => {
         if (isVisible) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setShouldRender(true);
             // Trigger animation in next tick
             requestAnimationFrame(() => setShow(true));

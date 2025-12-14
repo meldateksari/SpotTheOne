@@ -7,14 +7,9 @@ import AdminGuard from "@/components/admin/AdminGuard";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+    // Auto-login removed for security
     useEffect(() => {
-        if (!auth.currentUser) {
-            signInWithEmailAndPassword(
-                auth,
-                "teksarimelda@gmail.com",
-                "123456"
-            );
-        }
+        // Optional: Check auth state or perform other init
     }, []);
 
     return (

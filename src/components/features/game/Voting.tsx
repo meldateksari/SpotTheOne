@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Player } from "@/types";
 import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
+
 import { useLanguage } from "@/context/LanguageContext";
 
 interface VotingProps {

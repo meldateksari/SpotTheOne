@@ -19,6 +19,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
         // 1. Check Local Storage
         const savedLang = localStorage.getItem("app_language") as Language;
         if (savedLang && translations[savedLang]) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setLanguageState(savedLang);
         } else {
             // 2. Check Device Language

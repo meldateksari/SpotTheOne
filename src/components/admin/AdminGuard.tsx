@@ -19,7 +19,7 @@ export default function AdminGuard({
 
             if (!user) {
                 console.log("❌ No user → redirect");
-                router.replace("/");
+                router.replace("/admin/login");
                 return;
             }
 
@@ -28,7 +28,7 @@ export default function AdminGuard({
 
             if (!token.claims.admin) {
                 console.log("❌ Not admin → redirect");
-                router.replace("/");
+                router.replace("/admin/login");
                 return;
             }
 

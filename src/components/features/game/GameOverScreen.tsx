@@ -60,6 +60,15 @@ export default function GameOverScreen({ roomId, players, isHost }: GameOverScre
 
     // Countdown Timer & Auto Delete
     useEffect(() => {
+
+        const deleteRoom = async () => {
+            try {
+                await deleteDoc(doc(db, "rooms", roomId));
+            } catch (error) {
+                console.error("Error deleting room:", error);
+            }
+        };
+
         const timer = setInterval(() => {
             setTimeLeft((prev) => {
                 if (prev <= 1) {
@@ -76,14 +85,7 @@ export default function GameOverScreen({ roomId, players, isHost }: GameOverScre
         return () => clearInterval(timer);
     }, [isHost]);
 
-    const deleteRoom = async () => {
-        try {
-            await deleteDoc(doc(db, "rooms", roomId));
-            // Redirect happens via snapshot listener in RoomPage
-        } catch (error) {
-            console.error("Error deleting room:", error);
-        }
-    };
+
 
     const handleHome = () => {
         localStorage.removeItem("game_user");
